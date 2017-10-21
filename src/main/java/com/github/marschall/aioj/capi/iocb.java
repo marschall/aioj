@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 public class iocb {
 
-  private int data;
+  private Object data;
   short aio_lio_opcode;
   int aio_fildes;
 

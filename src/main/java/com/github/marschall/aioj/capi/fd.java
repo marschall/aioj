@@ -17,6 +17,8 @@ public class fd {
   // https://stackoverflow.com/questions/19747663/where-are-ioctl-parameters-such-as-0x1268-blksszget-actually-specified)
   // https://stackoverflow.com/questions/8416241/block-device-information-without-mounting-in-linux
   // http://support.fccps.cz/download/adv/frr/geom.c
+  // https://people.redhat.com/msnitzer/docs/io-limits.txt
+  // https://gist.github.com/amitsaha/4563032
 
   // BLKSSZGET
   public static native int getLogicalBlocksize(int fd);
