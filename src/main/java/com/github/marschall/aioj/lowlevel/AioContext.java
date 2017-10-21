@@ -29,10 +29,30 @@ public final class AioContext implements AutoCloseable {
 
   // https://linux.die.net/man/3/clock_gettime
   public void getEvents(long min, long max, long seconds, long nanos) {
-
+    if (min < 0L) {
+      throw new  IllegalArgumentException("negative count");
+    }
+    if (max < 0L) {
+      throw new  IllegalArgumentException("negative count");
+    }
+    if (seconds < 0L) {
+      throw new  IllegalArgumentException("negative timeout");
+    }
+    if (nanos < 0L) {
+      throw new  IllegalArgumentException("negative timeout");
+    }
   }
 
   public void getEvents(long min, long max, Duration timeout) {
+    if (timeout == null) {
+
+    }
+    if (timeout.equals(Duration.ZERO)) {
+
+    }
+    if (timeout.isNegative()) {
+      throw new  IllegalArgumentException("negative timeout");
+    }
 
   }
 

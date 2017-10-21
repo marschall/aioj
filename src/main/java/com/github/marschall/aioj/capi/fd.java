@@ -1,14 +1,35 @@
 package com.github.marschall.aioj.capi;
 
-public class fd {
+import java.io.IOException;
+import java.util.Objects;
+
+public final class fd {
+
+  public static int open(byte[] pathname, int flags, int mode) throws IOException {
+    Objects.requireNonNull(pathname, "pathspec");
+    return open0(pathname, flags, mode);
+  }
 
   // http://man7.org/linux/man-pages/man2/open.2.html
-  public static native int open();
+  private static native int open0(byte[] pathname, int flags, int mode) throws IOException;
+
+  public static int open(byte[] pathname, int flags) throws IOException {
+    Objects.requireNonNull(pathname, "pathspec");
+    return open0(pathname, flags);
+  }
+
+  // http://man7.org/linux/man-pages/man2/open.2.html
+  private static native int open0(byte[] pathname, int flags) throws IOException;
 
   public static native int close(int fd);
 
   // https://linux.die.net/man/2/fadvise
-  public static native int fadvise(int fd);
+  // http://man7.org/linux/man-pages/man2/posix_fadvise.2.html
+  public static int fadvise(int fd, long offset, long len, int advice) {
+    return fadvise0(fd, offset, len, advice);
+  }
+
+  private static native int fadvise0(int fd, long offset, long len, int advice);
 
   // https://linux.die.net/man/2/fstat
   // https://www.quora.com/Why-does-O_DIRECT-require-I-O-to-be-512-byte-aligned

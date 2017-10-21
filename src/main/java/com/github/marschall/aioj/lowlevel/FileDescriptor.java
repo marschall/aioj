@@ -10,10 +10,16 @@ public final class FileDescriptor implements AutoCloseable {
     this.fd = fd;
   }
 
-
-  public static FileDescriptor open() throws IOException {
+  public static FileDescriptor open(String pathname, int flags) throws IOException {
+    int fd = com.github.marschall.aioj.capi.fd.open(null, flags);
     // FIXME
-    return null;
+    return new FileDescriptor(fd);
+  }
+
+  public static FileDescriptor open(String pathname, int flags, int mode) throws IOException {
+    int fd = com.github.marschall.aioj.capi.fd.open(null, flags, mode);
+    // FIXME
+    return new FileDescriptor(fd);
   }
 
 
@@ -21,8 +27,8 @@ public final class FileDescriptor implements AutoCloseable {
     return com.github.marschall.aioj.capi.fd.getLogicalBlocksize(this.fd);
   }
 
-  public void fadvise(int flags) throws IOException {
-
+  public void fadvise(long offset, long len, int flags) throws IOException {
+    com.github.marschall.aioj.capi.fd.fadvise(this.fd, offset, len, flags);
   }
 
   @Override
