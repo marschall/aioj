@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 
 public final class LibMemory {
-
   public static ByteBuffer allocateAligned(int alignment, int size) {
     if (alignment < 0) {
       throw new IllegalArgumentException("Negative alignment: " + alignment);
@@ -32,5 +31,11 @@ public final class LibMemory {
   }
 
   private static native void free0(ByteBuffer buffer);
+
+  public static native void mlock(ByteBuffer buffer);
+
+  public static native void unmlock(ByteBuffer buffer);
+
+  public static native void madvise(ByteBuffer buffer, int advice);
 
 }

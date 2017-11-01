@@ -1,6 +1,7 @@
 package com.github.marschall.aioj.lowlevel;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public final class FileDescriptor implements AutoCloseable {
 
@@ -29,6 +30,10 @@ public final class FileDescriptor implements AutoCloseable {
 
   public void fadvise(long offset, long len, int flags) throws IOException {
     com.github.marschall.aioj.capi.fd.fadvise(this.fd, offset, len, flags);
+  }
+
+  public void mmap(ByteBuffer buffer, long length, int prot, int flags, long offset) {
+    com.github.marschall.aioj.capi.fd.mmap(buffer, length, prot, flags, this.fd, offset);
   }
 
   @Override

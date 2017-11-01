@@ -1,6 +1,7 @@
 package com.github.marschall.aioj.capi;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Objects;
 
 public final class fd {
@@ -30,6 +31,14 @@ public final class fd {
   }
 
   private static native int fadvise0(int fd, long offset, long len, int advice);
+
+  // http://insights.oetiker.ch/linux/fadvise/
+  // http://man7.org/linux/man-pages/man2/mincore.2.html
+  private static native int mincore(long addr, long length, byte[] vec);
+
+  public static native void mmap(ByteBuffer buffer, long length, int prot, int flags, int fd, long offset);
+
+  public static native int munmap(ByteBuffer buffer);
 
   // https://linux.die.net/man/2/fstat
   // https://www.quora.com/Why-does-O_DIRECT-require-I-O-to-be-512-byte-aligned

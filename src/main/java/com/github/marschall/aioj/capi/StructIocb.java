@@ -2,7 +2,7 @@ package com.github.marschall.aioj.capi;
 
 import java.nio.ByteBuffer;
 
-public final class iocb {
+public final class StructIocb {
 
   /**
    * Positioned read, corresponds to pread() system call.

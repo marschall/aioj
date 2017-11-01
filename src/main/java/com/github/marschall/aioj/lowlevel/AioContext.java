@@ -1,6 +1,7 @@
 package com.github.marschall.aioj.lowlevel;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.time.Duration;
 
 import com.github.marschall.aioj.capi.aio_context;
@@ -24,6 +25,14 @@ public final class AioContext implements AutoCloseable {
   }
 
   public void getEventsBlocking(long min, long max) {
+
+  }
+
+  public void read(FileDescriptor fileDescriptor, long position, ByteBuffer buffer) {
+
+  }
+
+  public void write(FileDescriptor fileDescriptor, long position, ByteBuffer buffer) {
 
   }
 
