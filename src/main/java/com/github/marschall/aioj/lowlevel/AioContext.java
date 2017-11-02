@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 
-import com.github.marschall.aioj.capi.aio_context;
+import com.github.marschall.aioj.capi.LibAio;
+import com.github.marschall.aioj.capi.StructIoEvent;
 
 public final class AioContext implements AutoCloseable {
 
@@ -15,17 +16,21 @@ public final class AioContext implements AutoCloseable {
   }
 
   public static AioContext setUp(int nr) {
-    long ctx = aio_context.io_setup(nr);
+    long ctx = LibAio.io_setup(nr);
     // FIXME
     return new AioContext(ctx);
   }
 
-  public void getEventsNonBlocking(long min, long max) {
-
+  public void getEventsNonBlocking(int min, int max, StructIoEvent[] events) {
+    LibAio.io_getevents(this.ctx, min, max, events, Duration.ZERO);
   }
 
-  public void getEventsBlocking(long min, long max) {
+  public void getEventsBlocking(int min, int max, StructIoEvent[] events, Duration timeout) {
+    LibAio.io_getevents(this.ctx, min, max, events, timeout);
+  }
 
+  public void getAllEventsBlocking(int count, StructIoEvent[] events) {
+    LibAio.io_getevents(this.ctx, count, count, events, null);
   }
 
   public void read(FileDescriptor fileDescriptor, long position, ByteBuffer buffer) {
@@ -71,7 +76,7 @@ public final class AioContext implements AutoCloseable {
 
   @Override
   public void close() throws IOException {
-    aio_context.io_destroy(this.ctx);
+    LibAio.io_destroy(this.ctx);
     // TODO Auto-generated method stub
 
   }

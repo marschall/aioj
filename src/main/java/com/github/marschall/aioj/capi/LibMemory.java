@@ -24,7 +24,7 @@ public final class LibMemory {
 
   public static void free(ByteBuffer buffer) {
     Objects.requireNonNull(buffer, "buffer");
-    if (buffer.hasArray()) {
+    if (!buffer.isDirect()) {
       throw new IllegalArgumentException("only direct buffers can be free()ed");
     }
     free0(buffer);

@@ -10,9 +10,10 @@ class DirectByteBufferTest {
   void test() {
     ByteBuffer buffer = ByteBuffer.allocateDirect(512);
     buffer.position(127);
-    buffer.limit(255);
+    buffer.limit(383);
 
     ByteBuffer slice = buffer.slice();
+
   }
 
 }

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
-public final class fd {
+public final class LibIo {
 
   public static int open(byte[] pathname, int flags, int mode) throws IOException {
     Objects.requireNonNull(pathname, "pathspec");

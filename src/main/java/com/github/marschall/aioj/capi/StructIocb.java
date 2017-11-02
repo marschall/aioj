@@ -1,6 +1,7 @@
 package com.github.marschall.aioj.capi;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
 public final class StructIocb {
 
@@ -10,17 +11,17 @@ public final class StructIocb {
   public static final int IOCB_CMD_PREAD = 0;
 
   /**
-   * Positioned write,´ corresponds to pwrite() system call.
+   * Positioned write, corresponds to pwrite() system call.
    */
   public static final int IOCB_CMD_PWRITE = 1;
 
   /**
-   * Sync file’s data and metadata with disk; corresponds to fsync() system call.
+   * Sync file's data and metadata with disk; corresponds to fsync() system call.
    */
   public static final int IOCB_CMD_FSYNC = 2;
 
   /**
-   * Sync file’s data and metadata with disk, but only metadata needed to access modified file data is written; corresponds to fdatasync() system call.
+   * Sync file's data and metadata with disk, but only metadata needed to access modified file data is written; corresponds to fdatasync() system call.
    */
   public static final int IOCB_CMD_FDSYNC = 3;
   /* These two are experimental.
@@ -50,5 +51,67 @@ public final class StructIocb {
   private ByteBuffer buf;
   private long nbytes;
   private long offset;
+
+  public void read(int fd, ByteBuffer buf, long offset, int nbytes, Object data) {
+    Objects.requireNonNull(buf, "buf");
+    if (!buf.isDirect()) {
+      throw new IllegalArgumentException("only direct buffers supported");
+    }
+    if (offset < 0) {
+      throw new IllegalArgumentException();
+    }
+    // ByteBuffer supports only int lengths
+    if ((nbytes < 0) || ((offset + nbytes) > buf.capacity())) {
+      throw new IllegalArgumentException();
+    }
+    this.aio_lio_opcode = IOCB_CMD_PREAD;
+    this.aio_fildes = fd;
+    this.data = data;
+
+    this.buf = null;
+    this.offset = offset;
+    this.nbytes = nbytes;
+  }
+
+  public void write(int fd, ByteBuffer buf, long offset, int nbytes, Object data) {
+    Objects.requireNonNull(buf, "buf");
+    if (!buf.isDirect()) {
+      throw new IllegalArgumentException("only direct buffers supported");
+    }
+    if (offset < 0) {
+      throw new IllegalArgumentException();
+    }
+    // ByteBuffer supports only int offsets
+    if ((nbytes < 0) || ((offset + nbytes) > buf.capacity())) {
+      throw new IllegalArgumentException();
+    }
+    this.aio_lio_opcode = IOCB_CMD_PWRITE;
+    this.aio_fildes = fd;
+    this.data = data;
+
+    this.buf = null;
+    this.offset = offset;
+    this.nbytes = nbytes;
+  }
+
+  public void fdatasync(int fd, Object data) {
+    this.aio_lio_opcode = IOCB_CMD_FDSYNC;
+    this.aio_fildes = fd;
+    this.data = data;
+
+    this.buf = null;
+    this.nbytes = 0L;
+    this.offset = 0L;
+  }
+
+  public void fsync(int fd, Object data) {
+    this.aio_lio_opcode = IOCB_CMD_FSYNC;
+    this.aio_fildes = fd;
+    this.data = data;
+
+    this.buf = null;
+    this.nbytes = 0L;
+    this.offset = 0L;
+  }
 
 }

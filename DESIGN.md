@@ -3,6 +3,7 @@ direct ByteBuffer
  * .get is an instrinsic (custom abstraction has JNI overhead)
   * TODO benchmark JNI overhead
  * reads are slower than heap ByteBuffer because of range check
+ * memory barrier same as Java
 
 No
  * allocations behind the back (except for iocb and iocb array and events array)
@@ -19,3 +20,9 @@ No
  * Linux x86-64 only
  * x32 probably doesn't work
  * everything but x86 probably doesn't work
+ 
+To Test
+ * read and write sliced buffer
+
+Not supporting io_cancel for now.
+Not supporting vectored io for now.
