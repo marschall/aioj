@@ -4,7 +4,13 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 
 public final class LibMemory {
-  public static ByteBuffer allocateAligned(int alignment, int size) {
+
+  private LibMemory() {
+    throw new AssertionError("not instantiable");
+  }
+
+  public static ByteBuffer allocateAligned(long alignment, int size) {
+    // ByteBuffer supports only int indices
     if (alignment < 0) {
       throw new IllegalArgumentException("Negative alignment: " + alignment);
     }
@@ -20,22 +26,57 @@ public final class LibMemory {
 
 
   // https://linux.die.net/man/3/posix_memalign
-  private static native ByteBuffer allocateAligned0(int alignment, int size);
+  private static native ByteBuffer allocateAligned0(long alignment, long size);
 
   public static void free(ByteBuffer buffer) {
-    Objects.requireNonNull(buffer, "buffer");
-    if (!buffer.isDirect()) {
-      throw new IllegalArgumentException("only direct buffers can be free()ed");
-    }
+    requireDirect(buffer);
     free0(buffer);
   }
 
   private static native void free0(ByteBuffer buffer);
 
-  public static native void mlock(ByteBuffer buffer);
+  // https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/functions.html#GetDirectBufferAddress
+  public static long getDirectBufferAddress(ByteBuffer buffer) {
+    requireDirect(buffer);
+    return getDirectBufferAddress0(buffer);
+  }
 
-  public static native void unmlock(ByteBuffer buffer);
+  private static native long getDirectBufferAddress0(ByteBuffer buffer);
 
-  public static native void madvise(ByteBuffer buffer, int advice);
+  // https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/functions.html#GetDirectBufferCapacity
+  public static long getDirectBufferCapacity(ByteBuffer buffer) {
+    requireDirect(buffer);
+    return getDirectBufferCapacity0(buffer);
+  }
+
+  private static native long getDirectBufferCapacity0(ByteBuffer buffer);
+
+  public static void mlock(ByteBuffer buffer) {
+    requireDirect(buffer);
+    mlock0(buffer);
+  }
+
+  private static native void mlock0(ByteBuffer buffer);
+
+  public static void unmlock(ByteBuffer buffer) {
+    requireDirect(buffer);
+    unmlock0(buffer);
+  }
+
+  private static native void unmlock0(ByteBuffer buffer);
+
+  public static void madvise(ByteBuffer buffer, int advice) {
+    requireDirect(buffer);
+    madvise0(buffer, advice);
+  }
+
+  private static native void madvise0(ByteBuffer buffer, int advice);
+
+  private static void requireDirect(ByteBuffer buffer) {
+    Objects.requireNonNull(buffer, "buffer");
+    if (!buffer.isDirect()) {
+      throw new IllegalArgumentException("only direct buffers allowed");
+    }
+  }
 
 }
