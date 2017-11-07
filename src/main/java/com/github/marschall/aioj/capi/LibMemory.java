@@ -72,6 +72,12 @@ public final class LibMemory {
 
   private static native void madvise0(ByteBuffer buffer, int advice);
 
+  public static int getpagesize() {
+    return getpagesize0();
+  }
+
+  private static native int getpagesize0();
+
   private static void requireDirect(ByteBuffer buffer) {
     Objects.requireNonNull(buffer, "buffer");
     if (!buffer.isDirect()) {

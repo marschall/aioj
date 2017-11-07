@@ -123,6 +123,17 @@
         <groupId>com.github.maven-nar</groupId>
         <artifactId>nar-maven-plugin</artifactId>
         <extensions>true</extensions>
+        <configuration>
+          <java>
+            <include>true</include>
+          </java>
+          <libraries>
+            <library>
+              <type>jni</type>
+              <linkCPP>false</linkCPP>
+            </library>
+          </libraries>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
