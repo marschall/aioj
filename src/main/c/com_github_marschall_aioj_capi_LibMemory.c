@@ -56,6 +56,17 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_unmlock0
   return munlock(addr, len);
 }
 
+JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_madvise0
+  (JNIEnv *env, jclass clazz, jobject buf, jint advice)
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
+  // TODO check return values
+  void *addr = (*env)->GetDirectBufferAddress(env, buf);
+  size_t length = (size_t) (*env)->GetDirectBufferCapacity(env, buf);
+  return madvise(addr, length, advice);
+}
+
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_getpagesize0
   (JNIEnv *env, jclass clazz)
 {

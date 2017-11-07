@@ -65,12 +65,12 @@ public final class LibMemory {
 
   private static native int unmlock0(ByteBuffer buffer);
 
-  public static void madvise(ByteBuffer buffer, int advice) {
+  public static int madvise(ByteBuffer buffer, int advice) {
     requireDirect(buffer);
-    madvise0(buffer, advice);
+    return madvise0(buffer, advice);
   }
 
-  private static native void madvise0(ByteBuffer buffer, int advice);
+  private static native int madvise0(ByteBuffer buffer, int advice);
 
   public static int getPageSize() {
     return getpagesize0();
