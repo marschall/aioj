@@ -22,4 +22,31 @@ class LibMemoryTest {
     LibMemory.free(buffer);
   }
 
+  @Test
+  void getDirectBufferAddress() {
+    ByteBuffer buffer = ByteBuffer.allocateDirect(512);
+    long address = LibMemory.getDirectBufferAddress(buffer);
+
+
+    buffer.position(128);
+    buffer.limit(128 + 256);
+
+    assertEquals(buffer.capacity(), LibMemory.getDirectBufferCapacity(buffer));
+    assertEquals(512, LibMemory.getDirectBufferCapacity(buffer));
+
+    ByteBuffer slice = buffer.slice();
+
+    assertEquals(128L, LibMemory.getDirectBufferAddress(slice) - address);
+
+    assertEquals(buffer.capacity(), LibMemory.getDirectBufferCapacity(buffer));
+    assertEquals(256, LibMemory.getDirectBufferCapacity(slice));
+  }
+
+  @Test
+  public void mlock() {
+    ByteBuffer buffer = ByteBuffer.allocateDirect(512);
+    assertEquals(0, LibMemory.mlock(buffer));
+    assertEquals(0, LibMemory.unmlock(buffer));
+  }
+
 }
