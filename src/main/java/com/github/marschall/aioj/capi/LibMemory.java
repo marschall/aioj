@@ -17,7 +17,7 @@ public final class LibMemory {
     if (size < 0) {
       throw new IllegalArgumentException("Negative size: " + size);
     }
-    ByteBuffer buffer = allocateAligned0(alignment, size);
+    ByteBuffer buffer = aligned_alloc0(alignment, size);
     if (buffer == null) {
       throw new AllocationFailedException();
     }
@@ -26,7 +26,7 @@ public final class LibMemory {
 
 
   // https://linux.die.net/man/3/posix_memalign
-  private static native ByteBuffer allocateAligned0(long alignment, long size);
+  private static native ByteBuffer aligned_alloc0(long alignment, long size);
 
   public static void free(ByteBuffer buffer) {
     requireDirect(buffer);
@@ -51,19 +51,19 @@ public final class LibMemory {
 
   private static native long getDirectBufferCapacity0(ByteBuffer buffer);
 
-  public static void mlock(ByteBuffer buffer) {
+  public static int mlock(ByteBuffer buffer) {
     requireDirect(buffer);
-    mlock0(buffer);
+    return mlock0(buffer);
   }
 
-  private static native void mlock0(ByteBuffer buffer);
+  private static native int mlock0(ByteBuffer buffer);
 
-  public static void unmlock(ByteBuffer buffer) {
+  public static int unmlock(ByteBuffer buffer) {
     requireDirect(buffer);
-    unmlock0(buffer);
+    return unmlock0(buffer);
   }
 
-  private static native void unmlock0(ByteBuffer buffer);
+  private static native int unmlock0(ByteBuffer buffer);
 
   public static void madvise(ByteBuffer buffer, int advice) {
     requireDirect(buffer);
@@ -72,7 +72,7 @@ public final class LibMemory {
 
   private static native void madvise0(ByteBuffer buffer, int advice);
 
-  public static int getpagesize() {
+  public static int getPageSize() {
     return getpagesize0();
   }
 

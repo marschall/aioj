@@ -17,9 +17,9 @@ No
  * user controls threads
  * copying to heap structures (if he wants to)
 
- * Linux x86-64 only
- * x32 probably doesn't work
- * everything but x86 probably doesn't work
+ * Linux 64bit only
+  * x32 probably doesn't work
+  * everything but x86 probably should work
  
 To Test
  * read and write sliced buffer
