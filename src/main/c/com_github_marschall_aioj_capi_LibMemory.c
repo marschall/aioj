@@ -1,7 +1,7 @@
 #include <jni.h>
 
 #include <unistd.h> // getpagesize
-#include <stdlib.h> // aligned_alloc
+#include <stdlib.h> // aligned_alloc free
 #include <sys/mman.h> // mlock unmlock
 
 #include "com_github_marschall_aioj_capi_LibMemory.h"
@@ -21,6 +21,14 @@ JNIEXPORT jobject JNICALL Java_com_github_marschall_aioj_capi_LibMemory_aligned_
     // TODO check errno
     return NULL;
   }
+}
+
+JNIEXPORT void JNICALL Java_com_github_marschall_aioj_capi_LibMemory_free0
+  (JNIEnv *env, jclass clazz, jobject buf)
+{
+  void *ptr = (*env)->GetDirectBufferAddress(env, buf);
+  // TODO null check
+  free(ptr);
 }
 
 JNIEXPORT jlong JNICALL Java_com_github_marschall_aioj_capi_LibMemory_getDirectBufferAddress0
