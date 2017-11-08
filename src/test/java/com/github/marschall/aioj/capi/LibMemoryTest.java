@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.ByteBuffer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class LibMemoryTest {
@@ -40,6 +41,13 @@ class LibMemoryTest {
 
     assertEquals(buffer.capacity(), LibMemory.getDirectBufferCapacity(buffer));
     assertEquals(256, LibMemory.getDirectBufferCapacity(slice));
+  }
+
+  @Test
+  @Disabled("needs mmap()ed area")
+  public void madvise() {
+    ByteBuffer buffer = ByteBuffer.allocateDirect(512);
+    assertEquals(0, LibMemory.madvise(buffer, MadviseArgument.MADV_SEQUENTIAL));
   }
 
   @Test
