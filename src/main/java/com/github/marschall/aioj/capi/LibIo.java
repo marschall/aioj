@@ -49,8 +49,11 @@ public final class LibIo {
   // http://support.fccps.cz/download/adv/frr/geom.c
   // https://people.redhat.com/msnitzer/docs/io-limits.txt
   // https://gist.github.com/amitsaha/4563032
-
+  // https://stackoverflow.com/questions/12939703/getting-disk-sector-size-without-raw-filesystem-permission
   // BLKSSZGET
-  public static native int getLogicalBlocksize(int fd);
+  // AKA logical block size of controller
+  public static native int getLogicalSectorSize(int fd);
+
+  public static native int getBlockSize(int fd);
 
 }

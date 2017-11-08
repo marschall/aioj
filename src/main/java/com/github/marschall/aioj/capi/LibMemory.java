@@ -16,10 +16,16 @@ public final class LibMemory {
   public static ByteBuffer allocateAligned(long alignment, int size) {
     // ByteBuffer supports only int indices
     if (alignment < 0) {
-      throw new IllegalArgumentException("Negative alignment: " + alignment);
+      throw new IllegalArgumentException("negative alignment");
     }
     if (size < 0) {
-      throw new IllegalArgumentException("Negative size: " + size);
+      throw new IllegalArgumentException("negative size");
+    }
+    if (Long.bitCount(alignment) != 1) {
+      throw new IllegalArgumentException("aligmnment must be power of 2");
+    }
+    if ((size % alignment) != 0) {
+      throw new IllegalArgumentException("size must be multiple of alignment");
     }
     ByteBuffer buffer = aligned_alloc0(alignment, size);
     if (buffer == null) {

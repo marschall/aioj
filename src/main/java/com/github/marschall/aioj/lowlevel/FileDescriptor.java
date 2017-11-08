@@ -26,8 +26,8 @@ public final class FileDescriptor implements AutoCloseable {
   }
 
 
-  public int getLogicalBlocksize() throws IOException {
-    return LibIo.getLogicalBlocksize(this.fd);
+  public int getBlockSize() throws IOException {
+    return LibIo.getBlockSize(this.fd);
   }
 
   public void fadvise(long offset, long len, int flags) throws IOException {
