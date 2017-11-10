@@ -1,9 +1,4 @@
 direct ByteBuffer
- * can be passed to system call without copy
- * .get is an instrinsic (custom abstraction has JNI overhead)
-  * TODO benchmark JNI overhead
- * reads are slower than heap ByteBuffer because of range check
- * memory barrier same as Java
 
 No
  * allocations behind the back (except for iocb and iocb array and events array)
@@ -26,3 +21,18 @@ To Test
 
 Not supporting io_cancel for now.
 Not supporting vectored io for now.
+
+
+Direct vs Heap
+==============
+ * Direct
+  * HotSpot goes through Bits.reserveMemory System.gc()​ followed​ ​by​  sleep()
+  * can be passed to system call without copy
+  * reads are slower than heap ByteBuffer because of range check
+  * memory barrier same as Java
+  * .get is an instrinsic (custom abstraction has JNI overhead)
+  * TODO benchmark JNI overhead
+ * Heap
+  * can hit slow path of allocator, allocation in old
+  * gets at least 16 times to make it into old
+  * may get copied in old

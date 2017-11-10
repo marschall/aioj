@@ -8,11 +8,11 @@ public final class LibIo {
 
   public static int open(byte[] pathname, int flags, int mode) throws IOException {
     Objects.requireNonNull(pathname, "pathspec");
-    return open0(pathname, flags, mode);
+    return open0(pathname, flags, mode, pathname.length);
   }
 
   // http://man7.org/linux/man-pages/man2/open.2.html
-  private static native int open0(byte[] pathname, int flags, int mode) throws IOException;
+  private static native int open0(byte[] pathname, int flags, int mode, int len) throws IOException;
 
   public static int open(byte[] pathname, int flags) throws IOException {
     Objects.requireNonNull(pathname, "pathspec");
