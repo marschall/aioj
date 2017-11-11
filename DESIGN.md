@@ -6,12 +6,16 @@ No
  * object or buffer pools
  * reflection, Unsafe, only API
  * no copying
+ * JNI criticals
 
+Instead
  * user controls buffer (has to pool them, if he wants to)
+ * user has to clear buffers
  * user controls objects (has to pool them, if he wants to)
  * user controls threads
  * copying to heap structures (if he wants to)
 
+Limitations
  * Linux 64bit only
   * x32 probably doesn't work
   * everything but x86 probably should work
