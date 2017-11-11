@@ -15,13 +15,11 @@ public final class FileDescriptor implements AutoCloseable {
 
   public static FileDescriptor open(String pathname, int flags) throws IOException {
     int fd = LibIo.open(null, flags);
-    // FIXME
     return new FileDescriptor(fd);
   }
 
   public static FileDescriptor open(String pathname, int flags, int mode) throws IOException {
     int fd = LibIo.open(null, flags, mode);
-    // FIXME
     return new FileDescriptor(fd);
   }
 
@@ -41,8 +39,6 @@ public final class FileDescriptor implements AutoCloseable {
   @Override
   public void close() throws IOException {
     LibIo.close(this.fd);
-    // TODO Auto-generated method stub
-
   }
 
 }

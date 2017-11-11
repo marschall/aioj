@@ -6,7 +6,7 @@ import java.util.Objects;
 public final class LibMemory {
 
   static {
-    System.load("/home/marschall/Documents/workspaces/default/aioj/target/nar/aioj-0.1.0-SNAPSHOT-amd64-Linux-gpp-jni/lib/amd64-Linux-gpp/jni/libaioj-0.1.0-SNAPSHOT.so");
+    LibraryLoader.assertInitialized();
   }
 
   private LibMemory() {

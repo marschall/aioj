@@ -6,9 +6,20 @@ import java.util.Objects;
 
 public final class LibIo {
 
+  static {
+    LibraryLoader.assertInitialized();
+  }
+
+  private static final int INVALID_FD = -1;
+
   public static int open(byte[] pathname, int flags, int mode) throws IOException {
     Objects.requireNonNull(pathname, "pathspec");
-    return open0(pathname, flags, mode, pathname.length);
+    int fd = open0(pathname, flags, mode, pathname.length);
+    if (fd == INVALID_FD) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not open() file");
+    }
+    return fd;
   }
 
   // http://man7.org/linux/man-pages/man2/open.2.html
@@ -16,13 +27,26 @@ public final class LibIo {
 
   public static int open(byte[] pathname, int flags) throws IOException {
     Objects.requireNonNull(pathname, "pathspec");
-    return open0(pathname, flags);
+    int fd = open0(pathname, flags, pathname.length);
+    if (fd == INVALID_FD) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not open() file");
+    }
+    return fd;
   }
 
   // http://man7.org/linux/man-pages/man2/open.2.html
-  private static native int open0(byte[] pathname, int flags) throws IOException;
+  private static native int open0(byte[] pathname, int flags, int len) throws IOException;
 
-  public static native int close(int fd);
+  public static void close(int fd)  throws IOException {
+    int result = close0(fd);
+    if (result == -1) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not close() file");
+    }
+  }
+
+  private static native int close0(int fd)  throws IOException;
 
   // https://linux.die.net/man/2/fadvise
   // http://man7.org/linux/man-pages/man2/posix_fadvise.2.html
@@ -32,9 +56,14 @@ public final class LibIo {
 
   private static native int fadvise0(int fd, long offset, long len, int advice);
 
+  public static int mincore(long addr, long length, byte[] vec) {
+    Objects.requireNonNull(vec, "vec");
+    return mincore0(addr, length, vec);
+  }
+
   // http://insights.oetiker.ch/linux/fadvise/
   // http://man7.org/linux/man-pages/man2/mincore.2.html
-  private static native int mincore(long addr, long length, byte[] vec);
+  private static native int mincore0(long addr, long length, byte[] vec);
 
   public static native void mmap(ByteBuffer buffer, long length, int prot, int flags, int fd, long offset);
 
