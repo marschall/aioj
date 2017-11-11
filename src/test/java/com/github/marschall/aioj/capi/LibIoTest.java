@@ -1,5 +1,6 @@
 package com.github.marschall.aioj.capi;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -19,7 +20,8 @@ class LibIoTest {
   @Test
   void openNotExists() throws IOException {
     byte[] pathspec = Paths.get("pom.txt").toAbsolutePath().toString().getBytes();
-    assertThrows(IOException.class, () -> LibIo.open(pathspec, OpenArgument.O_RDONLY));
+    IOException ioException = assertThrows(IOException.class, () -> LibIo.open(pathspec, OpenArgument.O_RDONLY));
+    assertNotEquals("could not open() file", ioException.getMessage());
   }
 
 }

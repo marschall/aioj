@@ -77,7 +77,7 @@ unsigned char *jbyteArrayToUnsignedCharStar(JNIEnv *env, jbyteArray array, jint 
 }
 
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BIII
-  (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint flags, jint mode, jint jpathnamelen)
+  (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelen, jint flags, jint mode)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
   _Static_assert (sizeof(jint) == sizeof(mode_t), "sizeof(jint) == sizeof(mode_t)");
@@ -108,7 +108,7 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BIII
 }
 
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BII
-  (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint flags, jint jpathnamelenlen)
+  (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelenlen, jint flags)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
 
