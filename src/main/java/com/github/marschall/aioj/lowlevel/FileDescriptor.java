@@ -23,6 +23,15 @@ public final class FileDescriptor implements AutoCloseable {
     return new FileDescriptor(fd);
   }
 
+  public static FileDescriptor open(byte[] pathname, int flags) throws IOException {
+    int fd = LibIo.open(null, flags);
+    return new FileDescriptor(fd);
+  }
+
+  public static FileDescriptor open(byte[] pathname, int flags, int mode) throws IOException {
+    int fd = LibIo.open(null, flags, mode);
+    return new FileDescriptor(fd);
+  }
 
   public int getBlockSize() throws IOException {
     return LibIo.getBlockSize(this.fd);

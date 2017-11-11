@@ -6,6 +6,7 @@ final class LibraryLoader {
 
   static {
     // -Djava.library.path=...
+    String javaLibraryPath = System.getProperty("java.library.path");
     boolean initialized = false;
     try {
       Runtime.getRuntime().loadLibrary("aioj-0.1.0-SNAPSHOT");

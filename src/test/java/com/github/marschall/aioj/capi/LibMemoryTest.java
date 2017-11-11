@@ -6,25 +6,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.nio.ByteBuffer;
 
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
-class LibMemoryTest {
+public class LibMemoryTest {
 
-  @Test
-  void getPageSize() {
+//  @Test
+  public void getPageSize() {
     int pageSize = LibMemory.getPageSize();
     assertEquals(4096, pageSize);
   }
 
-  @Test
-  void allocateAligned() {
+//  @Test
+  public void allocateAligned() {
     ByteBuffer buffer = LibMemory.allocateAligned(512, 8192);
     assertNotNull(buffer);
     LibMemory.free(buffer);
   }
 
-  @Test
-  void getDirectBufferAddress() {
+//  @Test
+  public void getDirectBufferAddress() {
     ByteBuffer buffer = ByteBuffer.allocateDirect(512);
     long address = LibMemory.getDirectBufferAddress(buffer);
 
@@ -43,14 +42,14 @@ class LibMemoryTest {
     assertEquals(256, LibMemory.getDirectBufferCapacity(slice));
   }
 
-  @Test
+//  @Test
   @Disabled("needs mmap()ed area")
   public void madvise() {
     ByteBuffer buffer = ByteBuffer.allocateDirect(512);
     assertEquals(0, LibMemory.madvise(buffer, MadviseArgument.MADV_SEQUENTIAL));
   }
 
-  @Test
+//  @Test
   public void mlock() {
     ByteBuffer buffer = ByteBuffer.allocateDirect(512);
     assertEquals(0, LibMemory.mlock(buffer));

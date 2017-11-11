@@ -4,7 +4,6 @@
 #include <stdlib.h> // aligned_alloc free
 #include <sys/mman.h> // mlock unmlock
 
-#include "com_github_marschall_aioj_capi_LibMemory.h"
 
 
 JNIEXPORT jobject JNICALL Java_com_github_marschall_aioj_capi_LibMemory_aligned_1alloc0
