@@ -46,7 +46,19 @@ public final class LibIo {
     }
   }
 
-  private static native int close0(int fd)  throws IOException;
+  private static native int close0(int fd) throws IOException;
+
+  public static long lseek(int fd, long offset, int whence)  throws IOException {
+    long result = lseek0(fd, offset, whence);
+    if (result == (offset - 1)) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not lseek() file");
+    }
+    return result;
+  }
+
+  // https://linux.die.net/man/2/lseek
+  private static native long lseek0(int fd, long offset, int whence) throws IOException;
 
   // https://linux.die.net/man/2/fadvise
   // http://man7.org/linux/man-pages/man2/posix_fadvise.2.html
@@ -56,14 +68,29 @@ public final class LibIo {
 
   private static native int fadvise0(int fd, long offset, long len, int advice);
 
-  public static int mincore(long addr, long length, byte[] vec) {
+  public static int mincore(ByteBuffer buffer, long length, byte[] vec) throws IOException {
     Objects.requireNonNull(vec, "vec");
-    return mincore0(addr, length, vec);
+    if (length > buffer.capacity()) {
+      throw new IllegalArgumentException("length too large");
+    }
+    if (length < 0) {
+      throw new IllegalArgumentException("length is negative");
+    }
+    int result = mincore0(buffer, length, vec, vec.length);
+    if (result == -1) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not mincore() address");
+    }
+    return result;
   }
 
   // http://insights.oetiker.ch/linux/fadvise/
   // http://man7.org/linux/man-pages/man2/mincore.2.html
-  private static native int mincore0(long addr, long length, byte[] vec);
+  private static native int mincore0(ByteBuffer buffer, long length, byte[] vec, int arrayLength) throws IOException;
+
+  public static boolean isInPageCache(byte b) {
+    return (b & 1) == 1;
+  }
 
   public static native void mmap(ByteBuffer buffer, long length, int prot, int flags, int fd, long offset);
 
