@@ -199,6 +199,11 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>once</forkMode>
+            <!-- target/nar/aioj-0.1.0-SNAPSHOT-amd64-Linux-gpp-jni/lib/amd64-Linux-gpp/jni/ -->
+          <argLine>-Djava.library.path=${project.build.directory}/nar/aioj-${project.version}-amd64-Linux-gpp-jni/lib/amd64-Linux-gpp/jni</argLine>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.junit.platform</groupId>
