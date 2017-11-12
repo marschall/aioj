@@ -1,5 +1,6 @@
 package com.github.marschall.aioj.capi;
 
+import static com.github.marschall.aioj.capi.MadviseArgument.MADV_DONTNEED;
 import static com.github.marschall.aioj.capi.MmapArgument.MAP_SHARED;
 import static com.github.marschall.aioj.capi.MmapArgument.PROT_NONE;
 import static com.github.marschall.aioj.capi.OpenArgument.O_RDONLY;
@@ -50,11 +51,10 @@ class LibIoTest {
     byte[] pathspec = pomXml.toString().getBytes();
     int fd = LibIo.open(pathspec, O_RDONLY);
     try {
-      //LibMemory.allocateAligned(LibMemory.getPageSize(), Math.toIntExact(size));
       ByteBuffer buffer = LibIo.mmap(null, Math.toIntExact(size), PROT_NONE, MAP_SHARED, fd, 0L);
       assertNotNull(buffer);
       try {
-
+        LibMemory.madvise(buffer, MADV_DONTNEED);
       } finally {
         LibIo.munmap(buffer);
       }

@@ -63,13 +63,6 @@ class LibMemoryTest {
   }
 
   @Test
-  @Disabled("needs mmap()ed area")
-  void madvise() {
-    ByteBuffer buffer = ByteBuffer.allocateDirect(512);
-    assertEquals(0, LibMemory.madvise(buffer, MadviseArgument.MADV_SEQUENTIAL));
-  }
-
-  @Test
   void mlock() {
     ByteBuffer buffer = ByteBuffer.allocateDirect(512);
     assertEquals(0, LibMemory.mlock(buffer));

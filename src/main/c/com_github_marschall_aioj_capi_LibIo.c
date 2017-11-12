@@ -153,7 +153,7 @@ jobject mmap0
   }
   
   void *result = mmap(addr, (size_t) length, (int) prot, (int) flags, (int) fd, (off_t) offset);
-  if (result != MAP_FAILED)
+  if (result == MAP_FAILED)
   {
     throwIoException(env, errno);
     return NULL;
