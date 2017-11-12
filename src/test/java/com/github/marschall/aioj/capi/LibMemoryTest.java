@@ -73,7 +73,7 @@ class LibMemoryTest {
   void mlock() {
     ByteBuffer buffer = ByteBuffer.allocateDirect(512);
     assertEquals(0, LibMemory.mlock(buffer));
-    assertEquals(0, LibMemory.unmlock(buffer));
+    assertEquals(0, LibMemory.munlock(buffer));
   }
 
 }

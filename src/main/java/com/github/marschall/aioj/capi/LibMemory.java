@@ -69,12 +69,12 @@ public final class LibMemory {
 
   private static native int mlock0(ByteBuffer buffer);
 
-  public static int unmlock(ByteBuffer buffer) {
+  public static int munlock(ByteBuffer buffer) {
     BufferAssertions.requireDirect(buffer);
-    return unmlock0(buffer);
+    return munlock0(buffer);
   }
 
-  private static native int unmlock0(ByteBuffer buffer);
+  private static native int munlock0(ByteBuffer buffer);
 
   public static int madvise(ByteBuffer buffer, int advice) {
     BufferAssertions.requireDirect(buffer);

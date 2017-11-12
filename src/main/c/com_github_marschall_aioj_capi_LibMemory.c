@@ -159,7 +159,7 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_mlock0
   return mlock0(env, buf);
 }
 
-JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_unmlock0
+JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_munlock0
   (JNIEnv *env, jclass clazz, jobject buf)
 {
   
