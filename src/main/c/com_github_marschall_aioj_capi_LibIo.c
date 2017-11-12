@@ -9,28 +9,14 @@
 #include <string.h>    // strerror_r
 #include <errno.h>     // errno
 
+#include "jniUtil.h"
+
 #include "com_github_marschall_aioj_capi_LibIo.h"
 
 
 int throwIoException(JNIEnv *env, int errorCode)
 {
-
-  char message[256];
-  int messageSuccess = strerror_r(errorCode, message, sizeof(message));
-  if (messageSuccess != 0)
-  {
-    return -1;
-  }
-
-  jclass ioException = (*env)->FindClass(env, "java/io/IOException");
-  if (ioException == NULL)
-  {
-     return -1;
-  }
-
-  int success = (*env)->ThrowNew(env, ioException, message);
-  (*env)->DeleteLocalRef(env, ioException); // not strictly necessary
-  return success;
+  return throwJniException(env, errorCode, "java/io/IOException");
 }
 
 char *jbyteArrayToCString(JNIEnv *env, jbyteArray array, jint len)
