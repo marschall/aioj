@@ -21,3 +21,17 @@ int throwJniException(JNIEnv *env, int errorCode, const char *exceptionClassName
   (*env)->DeleteLocalRef(env, exceptionClass); // not strictly necessary
   return success;
 }
+
+int throwIllegalStateException(JNIEnv *env, const char *message)
+{ 
+
+  jclass illegalStateException = (*env)->FindClass(env, "java/lang/IllegalStateException");
+  if (illegalStateException == NULL)
+  {
+     return -1;
+  }
+
+  int success = (*env)->ThrowNew(env, illegalStateException, message);
+  (*env)->DeleteLocalRef(env, illegalStateException); // not strictly necessary
+  return success;
+}

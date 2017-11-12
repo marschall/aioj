@@ -33,7 +33,11 @@ JNIEXPORT void JNICALL Java_com_github_marschall_aioj_capi_LibMemory_free0
   (JNIEnv *env, jclass clazz, jobject buf)
 {
   void *ptr = (*env)->GetDirectBufferAddress(env, buf);
-  // TODO null check
+  if (ptr == NULL)
+  {
+    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
+    return;
+  }
   free(ptr);
 }
 
@@ -56,9 +60,22 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_mlock0
 {
   _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
 
-  // TODO check return values
   void *addr = (*env)->GetDirectBufferAddress(env, buf);
-  size_t len = (size_t) (*env)->GetDirectBufferCapacity(env, buf);
+  if (addr == NULL)
+  {
+    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
+    return;
+  }
+  
+  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
+  if (capacity == -1)
+  {
+    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
+    return -1;
+  }
+  
+  size_t len = (size_t) capacity;
+  
   return mlock(addr, len);
 }
 
@@ -67,9 +84,21 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_unmlock0
 {
   _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
 
-  // TODO check return values
   void *addr = (*env)->GetDirectBufferAddress(env, buf);
-  size_t len = (size_t) (*env)->GetDirectBufferCapacity(env, buf);
+  if (addr == NULL)
+  {
+    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
+    return;
+  }
+  
+  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
+  if (capacity == -1)
+  {
+    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
+    return -1;
+  }
+  
+  size_t len = (size_t) capacity;
   return munlock(addr, len);
 }
 
@@ -79,9 +108,21 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_madvise0
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
   _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
 
-  // TODO check return values
   void *addr = (*env)->GetDirectBufferAddress(env, buf);
-  size_t length = (size_t) (*env)->GetDirectBufferCapacity(env, buf);
+  if (addr == NULL)
+  {
+    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
+    return;
+  }
+  
+  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
+  if (capacity == -1)
+  {
+    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
+    return -1;
+  }
+  
+  size_t length = (size_t) capacity;
   return madvise(addr, length, advice);
 }
 

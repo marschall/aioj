@@ -61,7 +61,7 @@ unsigned char *jbyteArrayToUnsignedCharStar(JNIEnv *env, jbyteArray array, jint 
 
 
 jint openByte3
-  (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelen, jint flags, jint mode)
+  (JNIEnv *env, jbyteArray jpathname, jint jpathnamelen, jint flags, jint mode)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
   _Static_assert (sizeof(jint) == sizeof(mode_t), "sizeof(jint) == sizeof(mode_t)");
@@ -92,7 +92,7 @@ jint openByte3
 }
 
 jint openByte2
-  (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelenlen, jint flags)
+  (JNIEnv *env, jbyteArray jpathname, jint jpathnamelenlen, jint flags)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
 
@@ -123,7 +123,7 @@ jint openByte2
 
 
 jint close0
-  (JNIEnv *env, jclass clazz, jint fd)
+  (JNIEnv *env, jint fd)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
 
@@ -183,19 +183,19 @@ jint munmap0
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BIII
   (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelen, jint flags, jint mode)
 {
-  return openByte3(env, clazz, jpathname, jpathnamelen, flags, mode);
+  return openByte3(env, jpathname, jpathnamelen, flags, mode);
 }
 
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BII
   (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelen, jint flags)
 {
-  return openByte2(env, clazz, jpathname, jpathnamelen, flags);
+  return openByte2(env, jpathname, jpathnamelen, flags);
 }
 
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_close0
   (JNIEnv *env, jclass clazz, jint fd)
 {
-  return close0(env, clazz, fd);
+  return close0(env,  fd);
 }
 
 //JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_mincore0
