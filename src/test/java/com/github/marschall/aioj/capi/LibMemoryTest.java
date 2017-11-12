@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.nio.ByteBuffer;
 
@@ -21,7 +20,6 @@ class LibMemoryTest {
 
   @Test
   void allocateAlignedSuccess() {
-    assumeTrue(System.getProperty("TRAVIS", "false").equals("false"));
     ByteBuffer buffer = LibMemory.allocateAligned(512, 8192);
     assertNotNull(buffer);
     LibMemory.free(buffer);
@@ -29,13 +27,11 @@ class LibMemoryTest {
 
   @Test
   void allocateAlignedNotMultiple() {
-    assumeTrue(System.getProperty("TRAVIS", "false").equals("false"));
     assertThrows(IllegalArgumentException.class, () -> LibMemory.allocateAligned(512, 128));
   }
 
   @Test
   void allocateAlignedNotPowerOfTwo() {
-    assumeTrue(System.getProperty("TRAVIS", "false").equals("false"));
     assertThrows(IllegalArgumentException.class, () -> LibMemory.allocateAligned(511, 8192));
   }
 
@@ -48,7 +44,6 @@ class LibMemoryTest {
 
   @Test
   void getDirectBufferAddress() {
-    assumeTrue(System.getProperty("TRAVIS", "false").equals("false"));
     ByteBuffer buffer = ByteBuffer.allocateDirect(512);
     long address = LibMemory.getDirectBufferAddress(buffer);
 
@@ -76,7 +71,6 @@ class LibMemoryTest {
 
   @Test
   void mlock() {
-    assumeTrue(System.getProperty("TRAVIS", "false").equals("false"));
     ByteBuffer buffer = ByteBuffer.allocateDirect(512);
     assertEquals(0, LibMemory.mlock(buffer));
     assertEquals(0, LibMemory.munlock(buffer));

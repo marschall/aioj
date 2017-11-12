@@ -15,7 +15,7 @@ public final class OpenArgument {
    * positioned at the end of the file, as if with lseek(2). The modification of
    * the file offset and the write operation are performed as a single atomic
    * step.
-   *
+   * <p>
    * O_APPEND may lead to corrupted files on NFS filesystems if more than one
    * process appends data to a file at once. This is because NFS does not
    * support appending to a file, so the client kernel has to simulate it, which
@@ -33,10 +33,10 @@ public final class OpenArgument {
   public static final int O_ASYNC = 8192;
 
   /**
-   * (since Linux 2.6.23) Enable the close-on-exec flag for the new file
+   * Enable the close-on-exec flag for the new file
    * descriptor. Specifying this flag permits a program to avoid additional
    * fcntl(2) F_SETFD operations to set the FD_CLOEXEC flag.
-   *
+   * <p>
    * Note that the use of this flag is essential in some multithreaded programs,
    * because using a separate fcntl(2) F_SETFD operation to set the FD_CLOEXEC
    * flag does not suffice to avoid race conditions where one thread opens a
@@ -48,15 +48,17 @@ public final class OpenArgument {
    * possible for any system call that creates a file descriptor whose
    * close-on-exec flag should be set, and various other Linux system calls
    * provide an equivalent of the O_CLOEXEC flag to deal with this problem.)
+   *
+   * @since Linux 2.6.23
    */
   public static final int O_CLOEXEC = 524288;
 
   /**
    * If the file does not exist, it will be created.
-   *
+   * <p>
    * The owner (user ID) of the new file is set to the effective user ID of the
    * process.
-   *
+   * <p>
    * The group ownership (group ID) of the new file is set either to the
    * effective group ID of the process (System V semantics) or to the group ID
    * of the parent directory (BSD semantics). On Linux, the behavior depends on
@@ -64,7 +66,7 @@ public final class OpenArgument {
    * bit is set, then BSD semantics apply; otherwise, System V semantics apply.
    * For some filesystems, the behavior also depends on the bsdgroups and
    * sysvgroups mount options described in mount(8)).
-   *
+   * <p>
    * The mode argument specifies the file mode bits be applied when a new file
    * is created. This argument must be supplied when O_CREAT or O_TMPFILE is
    * specified in flags; if neither O_CREAT nor O_TMPFILE is specified, then
@@ -85,7 +87,7 @@ public final class OpenArgument {
    * flag that data and necessary metadata are transferred. To guarantee
    * synchronous I/O, O_SYNC must be used in addition to O_DIRECT. See NOTES
    * below for further discussion.
-   *
+   * <p>
    * A semantically similar (but deprecated) interface for block devices is
    * described in raw(8).
    */
@@ -101,7 +103,7 @@ public final class OpenArgument {
   /**
    * Write operations on the file will complete according to the requirements of
    * synchronized I/O data integrity completion.
-   *
+   * <p>
    * By the time write(2) (and similar) return, the output data has been
    * transferred to the underlying hardware, along with any file metadata that
    * would be required to retrieve that data (i.e., as though each write(2) was
@@ -113,16 +115,16 @@ public final class OpenArgument {
    * Ensure that this call creates the file: if this flag is specified in
    * conjunction with O_CREAT, and pathname already exists, then open() will
    * fail.
-   *
+   * <p>
    * When these two flags are specified, symbolic links are not followed: if
    * pathname is a symbolic link, then open() fails regardless of where the
    * symbolic link points to.
-   *
+   * <p>
    * In general, the behavior of O_EXCL is undefined if it is used without
    * O_CREAT. There is one exception: on Linux 2.6 and later, O_EXCL can be used
    * without O_CREAT if pathname refers to a block device. If the block device
    * is in use by the system (e.g., mounted), open() fails with the error EBUSY.
-   *
+   * <p>
    * On NFS, O_EXCL is supported only when using NFSv3 or later on kernel 2.6 or
    * later. In NFS environments where O_EXCL support is not provided, programs
    * that rely on it for performing locking tasks will contain a race condition.
@@ -139,14 +141,14 @@ public final class OpenArgument {
   /**
    * Do not update the file last access time (st_atime in the inode) when the
    * file is read(2).
-   *
+   * <p>
    * This flag can be employed only if one of the following conditions is true:
-   *
+   * <p>
    * The effective UID of the process matches the owner UID of the file.
-   *
+   * <p>
    * The calling process has the CAP_FOWNER capability in its user namespace and
    * the owner UID of the file has a mapping in the namespace.
-   *
+   * <p>
    * This flag is intended for use by indexing or backup programs, where its use
    * can significantly reduce the amount of disk activity. This flag may not be
    * effective on all filesystems. One example is NFS, where the server
@@ -166,11 +168,11 @@ public final class OpenArgument {
    * indistinguishable from the case where an open fails because there are too
    * many symbolic links found while resolving components in the prefix part of
    * the pathname.)
-   *
+   * <p>
    * This flag is a FreeBSD extension, which was added to Linux in version
    * 2.1.126, and has subsequently been standardized in POSIX.1-2008.
    *
-   * See also O_PATH below.
+   * @see #O_PATH
    */
   public static final int O_NOFOLLOW = 131072;
 
@@ -178,13 +180,13 @@ public final class OpenArgument {
    * When possible, the file is opened in nonblocking mode. Neither the open()
    * nor any subsequent operations on the file descriptor which is returned will
    * cause the calling process to wait.
-   *
+   * <p>
    * Note that this flag has no effect for regular files and block devices; that
    * is, I/O operations will (briefly) block when device activity is required,
    * regardless of whether O_NONBLOCK is set. Since O_NONBLOCK semantics might
    * eventually be implemented, applications should not depend upon blocking
    * behavior when specifying this flag for regular files and block devices.
-   *
+   * <p>
    * For the handling of FIFOs (named pipes), see also fifo(7). For a discussion
    * of the effect of O_NONBLOCK in conjunction with mandatory file locks and
    * with file leases, see fcntl(2).
@@ -195,13 +197,13 @@ public final class OpenArgument {
    * When possible, the file is opened in nonblocking mode. Neither the open()
    * nor any subsequent operations on the file descriptor which is returned will
    * cause the calling process to wait.
-   *
+   * <p>
    * Note that this flag has no effect for regular files and block devices; that
    * is, I/O operations will (briefly) block when device activity is required,
    * regardless of whether O_NONBLOCK is set. Since O_NONBLOCK semantics might
    * eventually be implemented, applications should not depend upon blocking
    * behavior when specifying this flag for regular files and block devices.
-   *
+   * <p>
    * For the handling of FIFOs (named pipes), see also fifo(7). For a discussion
    * of the effect of O_NONBLOCK in conjunction with mandatory file locks and
    * with file leases, see fcntl(2).
@@ -209,7 +211,7 @@ public final class OpenArgument {
   public static final int O_NDELAY = 2048;
 
   /**
-   * (since Linux 2.6.39) Obtain a file descriptor that can be used for two
+   * Obtain a file descriptor that can be used for two
    * purposes: to indicate a location in the filesystem tree and to perform
    * operations that act purely at the file descriptor level. The file itself is
    * not opened, and other file operations (e.g., read(2), write(2), fchmod(2),
@@ -248,6 +250,8 @@ public final class OpenArgument {
    * descriptor referring to the automount directory without triggering a mount.
    * fstatfs(2) can then be used to determine if it is, in fact, an untriggered
    * automount point (.f_type == AUTOFS_SUPER_MAGIC).
+   *
+   * @since Linux 2.6.39
    */
   public static final int O_PATH = 2097152;
 
@@ -255,7 +259,7 @@ public final class OpenArgument {
    * Write operations on the file will complete according to the requirements of
    * synchronized I/O file integrity completion (by contrast with the
    * synchronized I/O data integrity completion provided by O_DSYNC.)
-   *
+   * <p>
    * By the time write(2) (and similar) return, the output data and associated
    * file metadata have been transferred to the underlying hardware (i.e., as
    * though each write(2) was followed by a call to fsync(2)). See NOTES below.
@@ -263,11 +267,11 @@ public final class OpenArgument {
   public static final int O_SYNC = 1052672;
 
   /**
-   * (since Linux 3.11) Create an unnamed temporary file. The pathname argument
+   * Create an unnamed temporary file. The pathname argument
    * specifies a directory; an unnamed inode will be created in that directory's
    * filesystem. Anything written to the resulting file will be lost when the
    * last file descriptor is closed, unless the file is given a name.
-   *
+   * <p>
    * O_TMPFILE must be specified with one of O_RDWR or O_WRONLY and, optionally,
    * O_EXCL. If O_EXCL is not specified, then linkat(2) can be used to link the
    * temporary file into the filesystem, making it permanent, using code like
@@ -299,18 +303,20 @@ public final class OpenArgument {
    * that (1) are automatically deleted when closed; (2) can never be reached
    * via any pathname; (3) are not subject to symlink attacks; and (4) do not
    * require the caller to devise unique names.
-   *
+   * <p>
    * Creating a file that is initially invisible, which is then populated with
    * data and adjusted to have appropriate filesystem attributes (fchown(2),
    * fchmod(2), fsetxattr(2), etc.) before being atomically linked into the
    * filesystem in a fully formed state (using linkat(2) as described above).
-   *
+   * <p>
    * O_TMPFILE requires support by the underlying filesystem; only a subset of
    * Linux filesystems provide that support. In the initial implementation,
    * support was provided in the ext2, ext3, ext4, UDF, Minix, and shmem
    * filesystems. Support for other filesys‐ tems has subsequently been added as
    * follows: XFS (Linux 3.15); Btrfs (Linux 3.16); F2FS (Linux 3.16); and ubifs
    * (Linux 4.9)
+   *
+   * @since Linux 3.11
    */
   public static final int O_TMPFILE = 4259840;
 
