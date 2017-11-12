@@ -90,9 +90,26 @@ public final class LibIo {
     return (b & 1) == 1;
   }
 
-  public static native void mmap(ByteBuffer buffer, long length, int prot, int flags, int fd, long offset);
+  public static ByteBuffer mmap(ByteBuffer buffer, int length, int prot, int flags, int fd, long offset) throws IOException {
+    if (buffer != null) {
 
-  public static native int munmap(ByteBuffer buffer);
+    }
+    ByteBuffer result = mmap0(buffer, length, prot, flags, fd, offset);
+    if (result == null) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not mmap() address");
+    }
+    return result;
+  }
+
+  private static native ByteBuffer mmap0(ByteBuffer buffer, long length, int prot, int flags, int fd, long offset) throws IOException;
+
+  public static int munmap(ByteBuffer buffer) throws IOException {
+    BufferAssertions.requireDirect(buffer);
+    return munmap0(buffer, buffer.capacity());
+  }
+
+  private static native int munmap0(ByteBuffer buffer, long length) throws IOException;
 
   // https://linux.die.net/man/2/fstat
   // https://www.quora.com/Why-does-O_DIRECT-require-I-O-to-be-512-byte-aligned

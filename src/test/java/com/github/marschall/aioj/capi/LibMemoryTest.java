@@ -1,7 +1,9 @@
 package com.github.marschall.aioj.capi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.ByteBuffer;
 
@@ -17,10 +19,27 @@ class LibMemoryTest {
   }
 
   @Test
-  void allocateAligned() {
+  void allocateAlignedSuccess() {
     ByteBuffer buffer = LibMemory.allocateAligned(512, 8192);
     assertNotNull(buffer);
     LibMemory.free(buffer);
+  }
+
+  @Test
+  void allocateAlignedNotMultiple() {
+    assertThrows(IllegalArgumentException.class, () -> LibMemory.allocateAligned(512, 128));
+  }
+
+  @Test
+  void allocateAlignedNotPowerOfTwo() {
+    assertThrows(IllegalArgumentException.class, () -> LibMemory.allocateAligned(511, 8192));
+  }
+
+  @Test
+  @Disabled("somehow doesn't throw")
+  void allocateAlignedTooSmall() {
+    AllocationFailedException exception = assertThrows(AllocationFailedException.class, () -> LibMemory.allocateAligned(2, 32));
+    assertNotEquals("allocation failed", exception.getMessage());
   }
 
   @Test

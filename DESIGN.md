@@ -6,7 +6,7 @@ No
  * object or buffer pools
  * reflection, Unsafe, only API
  * no copying
- * JNI criticals
+ * JNI criticals / pinning
 
 Instead
  * user controls buffer (has to pool them, if he wants to)
@@ -22,9 +22,12 @@ Limitations
  
 To Test
  * read and write sliced buffer
+ * Interruption checks
 
 Not supporting io_cancel for now.
 Not supporting vectored io for now.
+
+O_TMPFILE
 
 
 Direct vs Heap

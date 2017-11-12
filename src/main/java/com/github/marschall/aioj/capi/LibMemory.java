@@ -1,7 +1,6 @@
 package com.github.marschall.aioj.capi;
 
 import java.nio.ByteBuffer;
-import java.util.Objects;
 
 public final class LibMemory {
 
@@ -27,9 +26,11 @@ public final class LibMemory {
     if ((size % alignment) != 0) {
       throw new IllegalArgumentException("size must be multiple of alignment");
     }
+    // we could also assert a multiple of sizeof(void *)
     ByteBuffer buffer = aligned_alloc0(alignment, size);
     if (buffer == null) {
-      throw new AllocationFailedException();
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new AllocationFailedException("allocation failed");
     }
     return buffer;
   }
@@ -39,7 +40,7 @@ public final class LibMemory {
   private static native ByteBuffer aligned_alloc0(long alignment, long size);
 
   public static void free(ByteBuffer buffer) {
-    requireDirect(buffer);
+    BufferAssertions.requireDirect(buffer);
     free0(buffer);
   }
 
@@ -47,7 +48,7 @@ public final class LibMemory {
 
   // https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/functions.html#GetDirectBufferAddress
   public static long getDirectBufferAddress(ByteBuffer buffer) {
-    requireDirect(buffer);
+    BufferAssertions.requireDirect(buffer);
     return getDirectBufferAddress0(buffer);
   }
 
@@ -55,28 +56,28 @@ public final class LibMemory {
 
   // https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/functions.html#GetDirectBufferCapacity
   public static long getDirectBufferCapacity(ByteBuffer buffer) {
-    requireDirect(buffer);
+    BufferAssertions.requireDirect(buffer);
     return getDirectBufferCapacity0(buffer);
   }
 
   private static native long getDirectBufferCapacity0(ByteBuffer buffer);
 
   public static int mlock(ByteBuffer buffer) {
-    requireDirect(buffer);
+    BufferAssertions.requireDirect(buffer);
     return mlock0(buffer);
   }
 
   private static native int mlock0(ByteBuffer buffer);
 
   public static int unmlock(ByteBuffer buffer) {
-    requireDirect(buffer);
+    BufferAssertions.requireDirect(buffer);
     return unmlock0(buffer);
   }
 
   private static native int unmlock0(ByteBuffer buffer);
 
   public static int madvise(ByteBuffer buffer, int advice) {
-    requireDirect(buffer);
+    BufferAssertions.requireDirect(buffer);
     return madvise0(buffer, advice);
   }
 
@@ -87,12 +88,5 @@ public final class LibMemory {
   }
 
   private static native int getpagesize0();
-
-  private static void requireDirect(ByteBuffer buffer) {
-    Objects.requireNonNull(buffer, "buffer");
-    if (!buffer.isDirect()) {
-      throw new IllegalArgumentException("only direct buffers allowed");
-    }
-  }
 
 }

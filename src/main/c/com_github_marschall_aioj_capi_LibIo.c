@@ -11,9 +11,6 @@
 
 #include "jniUtil.h"
 
-#include "com_github_marschall_aioj_capi_LibIo.h"
-
-
 int throwIoException(JNIEnv *env, int errorCode)
 {
   return throwJniException(env, errorCode, "java/io/IOException");
@@ -62,7 +59,8 @@ unsigned char *jbyteArrayToUnsignedCharStar(JNIEnv *env, jbyteArray array, jint 
   return buf;
 }
 
-JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BIII
+
+jint openByte3
   (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelen, jint flags, jint mode)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
@@ -93,7 +91,7 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BIII
   return fd;
 }
 
-JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BII
+jint openByte2
   (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelenlen, jint flags)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
@@ -123,7 +121,8 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BII
   return fd;
 }
 
-JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_close0
+
+jint close0
   (JNIEnv *env, jclass clazz, jint fd)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
@@ -136,13 +135,76 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_close0
   return result;
 }
 
+jobject mmap0
+  (JNIEnv *env, jobject buffer, jlong length, jint prot, jint flags, jint fd, jlong offset)
+{
+  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+  _Static_assert (sizeof(jlong) == sizeof(off_t), "sizeof(jlong) == sizeof(off_t)");
+
+  void *addr;
+  if ((*env)->IsSameObject(env, buffer, NULL))
+  {
+    addr = NULL;
+  }
+  else
+  {
+    addr = (*env)->GetDirectBufferAddress(env, buffer);
+  }
+  
+  void *result = mmap(addr, (size_t) length, (int) prot, (int) flags, (int) fd, (off_t) offset);
+  if (result != MAP_FAILED)
+  {
+    throwIoException(env, errno);
+    return NULL;
+  }
+  else
+  {
+    return (*env)->NewDirectByteBuffer(env, result, length);
+  }
+}
+
+jint munmap0
+  (JNIEnv *env, jobject buffer, jlong length)
+{
+  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+
+  void *addr = (*env)->GetDirectBufferAddress(env, buffer);
+  // TODO null check
+  int result = munmap(addr, (size_t) length);
+  if (result != 0)
+  {
+    throwIoException(env, errno);
+  }
+  return result;
+}
+
+JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BIII
+  (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelen, jint flags, jint mode)
+{
+  return openByte3(env, clazz, jpathname, jpathnamelen, flags, mode);
+}
+
+JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_open0___3BII
+  (JNIEnv *env, jclass clazz, jbyteArray jpathname, jint jpathnamelen, jint flags)
+{
+  return openByte2(env, clazz, jpathname, jpathnamelen, flags);
+}
+
+JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_close0
+  (JNIEnv *env, jclass clazz, jint fd)
+{
+  return close0(env, clazz, fd);
+}
+
 //JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_mincore0
 //  (JNIEnv *env, jclass clazz, jlong addr, jlong length, jbyteArray jvec, jint arrayLength)
 //{
 //  _Static_assert (sizeof(jlong) == sizeof(void *), "sizeof(jlong) == sizeof(void *)");
 //  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
 //  _Static_assert (sizeof(jbyte) == sizeof(unsigned char), "sizeof(jbyte) == sizeof(unsigned char)");
-//
+//  TODO GetByteArrayElements
 //  unsigned char *vec = jbyteArrayToUnsignedCharStar(env, jvec, arrayLength);
 //  if (vec == NULL)
 //  {
@@ -171,4 +233,16 @@ JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_close0
 //  
 //  return result;
 //}
+
+JNIEXPORT jobject JNICALL Java_com_github_marschall_aioj_capi_LibIo_mmap0
+  (JNIEnv *env, jclass clazz, jobject buffer, jlong length, jint prot, jint flags, jint fd, jlong offset)
+{
+  return mmap0(env, buffer, length, prot, flags, fd, offset);
+}
+
+JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibIo_munmap0
+  (JNIEnv *env, jclass clazz, jobject buffer, jlong length)
+{
+  return munmap0(env, buffer, length);
+}
 

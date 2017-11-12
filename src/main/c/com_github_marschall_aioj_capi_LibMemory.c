@@ -3,8 +3,14 @@
 #include <unistd.h> // getpagesize
 #include <stdlib.h> // aligned_alloc free
 #include <sys/mman.h> // mlock unmlock
+#include <errno.h>
 
+#include "jniUtil.h"
 
+int throwAllocationFailedException(JNIEnv *env, int errorCode)
+{
+  return throwJniException(env, errorCode, "com/github/marschall/aioj/capi/AllocationFailedException");
+}
 
 JNIEXPORT jobject JNICALL Java_com_github_marschall_aioj_capi_LibMemory_aligned_1alloc0
   (JNIEnv *env, jclass clazz, jlong alignment, jlong size)
@@ -18,7 +24,7 @@ JNIEXPORT jobject JNICALL Java_com_github_marschall_aioj_capi_LibMemory_aligned_
   }
   else
   {
-    // TODO check errno
+    throwAllocationFailedException(env, errno);
     return NULL;
   }
 }
