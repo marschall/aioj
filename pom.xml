@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.marschall</groupId>
   <artifactId>aioj</artifactId>
-  <packaging>nar</packaging>
+  <packaging>pom</packaging>
   <version>0.1.0-SNAPSHOT</version>
   <inceptionYear>2017</inceptionYear>
-  <name>AIOJ</name>
+  <name>AIOJ Parent POM</name>
   <description>A experimental Linux asynchronous IO binding for Java</description>
 
   <url>https://github.com/marschall/aioj</url>
@@ -48,61 +48,10 @@
     </license>
   </licenses>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Only required to run tests in an IDE that bundles an older version -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Only required to run tests in an IDE that bundles an older version -->
-    <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-launcher</artifactId>
-      <version>${junit.platform.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-junit</artifactId>
-      <version>2.0.0.0</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openjdk.jmh</groupId>
-      <artifactId>jmh-core</artifactId>
-      <version>${jmh.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openjdk.jmh</groupId>
-      <artifactId>jmh-generator-annprocess</artifactId>
-      <version>${jmh.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openjdk.jol</groupId>
-      <artifactId>jol-core</artifactId>
-      <version>0.8</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>aioj-benchmark</module>
+    <module>aioj-core</module>
+  </modules>
 
   <distributionManagement>
     <snapshotRepository>
@@ -119,22 +68,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>com.github.maven-nar</groupId>
-        <artifactId>nar-maven-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <java>
-            <include>true</include>
-          </java>
-          <libraries>
-            <library>
-              <type>jni</type>
-              <linkCPP>false</linkCPP>
-            </library>
-          </libraries>
-        </configuration>
-      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -199,11 +132,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>once</forkMode>
-            <!-- target/nar/aioj-0.1.0-SNAPSHOT-amd64-Linux-gpp-jni/lib/amd64-Linux-gpp/jni/ -->
-          <argLine>-Djava.library.path=${project.build.directory}/nar/aioj-${project.version}-amd64-Linux-gpp-jni/lib/amd64-Linux-gpp/jni -Xcheck:jni</argLine>
-        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.junit.platform</groupId>

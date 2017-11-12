@@ -17,8 +17,8 @@ Instead
 
 Limitations
  * Linux 64bit only
-  * x32 probably doesn't work
-  * everything but x86 probably should work
+   * x32 probably doesn't work
+   * everything but x86 probably should work
  
 To Test
  * read and write sliced buffer
@@ -33,13 +33,13 @@ O_TMPFILE
 Direct vs Heap
 ==============
  * Direct
-  * HotSpot goes through Bits.reserveMemory System.gc()​ followed​ ​by​  sleep()
-  * can be passed to system call without copy
-  * reads are slower than heap ByteBuffer because of range check
-  * memory barrier same as Java
-  * .get is an instrinsic (custom abstraction has JNI overhead)
-  * TODO benchmark JNI overhead
+   * HotSpot goes through Bits.reserveMemory System.gc()​ followed​ ​by​  sleep()
+   * can be passed to system call without copy
+   * reads are slower than heap ByteBuffer because of range check
+   * memory barrier same as Java
+   * .get is an instrinsic (custom abstraction has JNI overhead)
+   * TODO benchmark JNI overhead
  * Heap
-  * can hit slow path of allocator, allocation in old
-  * gets at least 16 times to make it into old
-  * may get copied in old
+   * can hit slow path of allocator, allocation in old
+   * gets at least 16 times to make it into old
+   * may get copied in old

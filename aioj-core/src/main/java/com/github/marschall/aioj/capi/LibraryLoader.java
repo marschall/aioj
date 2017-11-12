@@ -9,7 +9,7 @@ final class LibraryLoader {
     String javaLibraryPath = System.getProperty("java.library.path");
     boolean initialized = false;
     try {
-      Runtime.getRuntime().loadLibrary("aioj-0.1.0-SNAPSHOT");
+      Runtime.getRuntime().loadLibrary("aioj-core-0.1.0-SNAPSHOT");
       initialized = true;
       INITIALIZED = initialized;
     } catch (RuntimeException | Error e) {
