@@ -12,8 +12,107 @@ int throwAllocationFailedException(JNIEnv *env, int errorCode)
   return throwJniException(env, errorCode, "com/github/marschall/aioj/capi/AllocationFailedException");
 }
 
-JNIEXPORT jobject JNICALL Java_com_github_marschall_aioj_capi_LibMemory_aligned_1alloc0
-  (JNIEnv *env, jclass clazz, jlong alignment, jlong size)
+void free0
+  (JNIEnv *env, jobject buf)
+{
+  void *ptr = (*env)->GetDirectBufferAddress(env, buf);
+  if (ptr == NULL)
+  {
+    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
+    return;
+  }
+  free(ptr);
+}
+
+jlong getDirectBufferAddress0
+  (JNIEnv *env, jobject buf)
+{
+  _Static_assert (sizeof(jlong) == sizeof(void *), "sizeof(jlong) == sizeof(void *)");
+
+  return (jlong) (*env)->GetDirectBufferAddress(env, buf);
+}
+
+jint mlock0
+  (JNIEnv *env, jobject buf)
+{
+  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
+
+  void *addr = (*env)->GetDirectBufferAddress(env, buf);
+  if (addr == NULL)
+  {
+    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
+    return -1;
+  }
+  
+  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
+  if (capacity == -1)
+  {
+    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
+    return -1;
+  }
+  
+  size_t len = (size_t) capacity;
+  
+  return mlock(addr, len);
+}
+
+jint unmlock0
+  (JNIEnv *env, jobject buf)
+{
+  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
+
+  void *addr = (*env)->GetDirectBufferAddress(env, buf);
+  if (addr == NULL)
+  {
+    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
+    return -1;
+  }
+  
+  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
+  if (capacity == -1)
+  {
+    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
+    return -1;
+  }
+  
+  size_t len = (size_t) capacity;
+  return munlock(addr, len);
+}
+
+jint madvise0
+  (JNIEnv *env, jobject buf, jint advice)
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
+
+  void *addr = (*env)->GetDirectBufferAddress(env, buf);
+  if (addr == NULL)
+  {
+    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
+    return -1;
+  }
+  
+  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
+  if (capacity == -1)
+  {
+    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
+    return -1;
+  }
+  
+  size_t length = (size_t) capacity;
+  return madvise(addr, length, advice);
+}
+
+jint getpagesize0
+  ()
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+
+  return getpagesize();
+}
+
+jobject aligned_1alloc0
+  (JNIEnv *env, jlong alignment, jlong size)
 {
   _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
 
@@ -29,24 +128,22 @@ JNIEXPORT jobject JNICALL Java_com_github_marschall_aioj_capi_LibMemory_aligned_
   }
 }
 
+JNIEXPORT jobject JNICALL Java_com_github_marschall_aioj_capi_LibMemory_aligned_1alloc0
+  (JNIEnv *env, jclass clazz, jlong alignment, jlong size)
+{
+  return aligned_1alloc0(env, alignment, size);
+}
+
 JNIEXPORT void JNICALL Java_com_github_marschall_aioj_capi_LibMemory_free0
   (JNIEnv *env, jclass clazz, jobject buf)
 {
-  void *ptr = (*env)->GetDirectBufferAddress(env, buf);
-  if (ptr == NULL)
-  {
-    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
-    return;
-  }
-  free(ptr);
+  return free0(env, buf);
 }
 
 JNIEXPORT jlong JNICALL Java_com_github_marschall_aioj_capi_LibMemory_getDirectBufferAddress0
   (JNIEnv *env, jclass clazz, jobject buf)
 {
-  _Static_assert (sizeof(jlong) == sizeof(void *), "sizeof(jlong) == sizeof(void *)");
-
-  return (jlong) (*env)->GetDirectBufferAddress(env, buf);
+  return getDirectBufferAddress0(env, buf);
 }
 
 JNIEXPORT jlong JNICALL Java_com_github_marschall_aioj_capi_LibMemory_getDirectBufferCapacity0
@@ -55,82 +152,30 @@ JNIEXPORT jlong JNICALL Java_com_github_marschall_aioj_capi_LibMemory_getDirectB
   return (*env)->GetDirectBufferCapacity(env, buf);
 }
 
+
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_mlock0
   (JNIEnv *env, jclass clazz, jobject buf)
 {
-  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
-
-  void *addr = (*env)->GetDirectBufferAddress(env, buf);
-  if (addr == NULL)
-  {
-    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
-    return;
-  }
-  
-  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
-  if (capacity == -1)
-  {
-    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
-    return -1;
-  }
-  
-  size_t len = (size_t) capacity;
-  
-  return mlock(addr, len);
+  return mlock0(env, buf);
 }
 
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_unmlock0
   (JNIEnv *env, jclass clazz, jobject buf)
 {
-  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
-
-  void *addr = (*env)->GetDirectBufferAddress(env, buf);
-  if (addr == NULL)
-  {
-    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
-    return;
-  }
   
-  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
-  if (capacity == -1)
-  {
-    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
-    return -1;
-  }
-  
-  size_t len = (size_t) capacity;
-  return munlock(addr, len);
+  return unmlock0(env, buf);
 }
 
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_madvise0
   (JNIEnv *env, jclass clazz, jobject buf, jint advice)
 {
-  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
-  _Static_assert (sizeof(jlong) == sizeof(size_t), "sizeof(jlong) == sizeof(size_t)");
-
-  void *addr = (*env)->GetDirectBufferAddress(env, buf);
-  if (addr == NULL)
-  {
-    throwIllegalStateException(env, "GetDirectBufferAddress returned NULL");
-    return;
-  }
-  
-  jlong capacity = (*env)->GetDirectBufferCapacity(env, buf);
-  if (capacity == -1)
-  {
-    throwIllegalStateException(env, "GetDirectBufferCapacity returned -1");
-    return -1;
-  }
-  
-  size_t length = (size_t) capacity;
-  return madvise(addr, length, advice);
+  return madvise0(env, buf, advice);
 }
 
 JNIEXPORT jint JNICALL Java_com_github_marschall_aioj_capi_LibMemory_getpagesize0
   (JNIEnv *env, jclass clazz)
 {
-  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
 
-  return getpagesize();
+  return getpagesize0();
 }
 
