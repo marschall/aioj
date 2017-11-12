@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.nio.ByteBuffer;
 
@@ -20,6 +21,7 @@ class LibMemoryTest {
 
   @Test
   void allocateAlignedSuccess() {
+    assumeTrue(System.getProperty("TRAVIS", "false").equals("false"));
     ByteBuffer buffer = LibMemory.allocateAligned(512, 8192);
     assertNotNull(buffer);
     LibMemory.free(buffer);
