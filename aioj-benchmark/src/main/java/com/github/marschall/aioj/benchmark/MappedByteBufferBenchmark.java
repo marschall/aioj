@@ -23,13 +23,13 @@ public class MappedByteBufferBenchmark implements FileBenchmark {
     try (FileChannel channel = FileChannel.open(Paths.get(filename), READ)) {
       long size = channel.size();
       int increment = Integer.MAX_VALUE;
-      for (int i = 0; i < size; i += increment) {
-        long mapSize = Math.min(size, i + increment) - i;
-        MappedByteBuffer buffer = channel.map(READ_ONLY, i, mapSize);
+      for (long position = 0; position < size; position += increment) {
+        long mapSize = Math.min(size, position + increment) - position;
+        MappedByteBuffer buffer = channel.map(READ_ONLY, position, mapSize);
         if (this.force) {
           buffer.force();
-          sum  += sum(buffer, Math.toIntExact(mapSize));
         }
+        sum  += sum(buffer, Math.toIntExact(mapSize));
       }
     }
     return sum;
