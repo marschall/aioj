@@ -18,9 +18,9 @@ class MappedByteBufferBenchmark implements FileBenchmark {
   }
 
   @Override
-  public long read(String filename) throws IOException {
+  public long read(String fileName) throws IOException {
     long sum = 0L;
-    try (FileChannel channel = FileChannel.open(Paths.get(filename), READ)) {
+    try (FileChannel channel = FileChannel.open(Paths.get(fileName), READ)) {
       long size = channel.size();
       int increment = Integer.MAX_VALUE;
       for (long position = 0; position < size; position += increment) {

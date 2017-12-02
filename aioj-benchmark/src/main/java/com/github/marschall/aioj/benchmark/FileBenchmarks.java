@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class FileBenchmarks {
+public final class FileBenchmarks {
 
 
   void run(String[] args) throws IOException {

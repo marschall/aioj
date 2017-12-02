@@ -14,10 +14,10 @@ class FileInputStreamBenchmark implements FileBenchmark {
   }
 
   @Override
-  public long read(String filename) throws IOException {
+  public long read(String fileName) throws IOException {
     byte[] buffer = new byte[this.blockSize];
     long sum = 0L;
-    try (FileInputStream stream = new FileInputStream(filename)) {
+    try (FileInputStream stream = new FileInputStream(fileName)) {
       int read = stream.read(buffer);
       while (read != -1) {
         sum += sum(buffer, read);

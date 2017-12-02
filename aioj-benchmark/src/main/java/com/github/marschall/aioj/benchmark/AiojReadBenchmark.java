@@ -18,14 +18,14 @@ class AiojReadBenchmark implements FileBenchmark {
   }
 
   @Override
-  public long read(String filename) throws IOException {
+  public long read(String fileName) throws IOException {
     int flags;
     if (this.direct) {
       flags = O_RDONLY | O_DIRECT;
     } else {
       flags = O_RDONLY;
     }
-    try (FileDescriptor fileDescriptor = FileDescriptor.open(filename, flags)) {
+    try (FileDescriptor fileDescriptor = FileDescriptor.open(fileName, flags)) {
 
     }
     return 0;

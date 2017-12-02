@@ -4,6 +4,6 @@ import java.io.IOException;
 
 interface FileBenchmark {
 
-  long read(String filename) throws IOException;
+  long read(String fileName) throws IOException;
 
 }

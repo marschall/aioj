@@ -23,9 +23,9 @@ class AiojMmapBenchmark implements FileBenchmark {
   }
 
   @Override
-  public long read(String filename) throws IOException {
+  public long read(String fileName) throws IOException {
     long sum = 0L;
-    try (FileDescriptor fileDescriptor = FileDescriptor.open(filename, O_RDONLY)) {
+    try (FileDescriptor fileDescriptor = FileDescriptor.open(fileName, O_RDONLY)) {
       // FIXME
       long size = 0L;
       int increment = Integer.MAX_VALUE;
