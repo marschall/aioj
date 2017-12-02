@@ -35,4 +35,13 @@ class MappedByteBufferBenchmark implements FileBenchmark {
     return sum;
   }
 
+  @Override
+  public String getDescription() {
+    if (this.force) {
+      return "MappedByteBuffer with force";
+    } else {
+      return "MappedByteBuffer without force";
+    }
+  }
+
 }

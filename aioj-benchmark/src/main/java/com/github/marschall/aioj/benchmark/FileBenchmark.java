@@ -6,4 +6,6 @@ interface FileBenchmark {
 
   long read(String fileName) throws IOException;
 
+  String getDescription();
+
 }

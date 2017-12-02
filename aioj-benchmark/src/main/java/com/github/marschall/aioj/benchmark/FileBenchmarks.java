@@ -21,7 +21,7 @@ public final class FileBenchmarks {
     long sum = benchmark.read(fileName);
     long end = System.currentTimeMillis();
 
-    System.out.printf("took %d ms sum is %d %n", end - start, sum);
+    System.out.printf("%s%ntook %d ms sum is %d %n----%n", benchmark.getDescription(), end - start, sum);
   }
 
   private FileBenchmark instantiate(String benchmark, List<String> options) {
@@ -49,8 +49,8 @@ public final class FileBenchmarks {
   }
 
   private FileBenchmark instantiateFileInputStream(List<String> options) {
-    int blockSize = Integer.parseInt(options.get(0));
-    return new FileInputStreamBenchmark(blockSize);
+    int bufferSize = Integer.parseInt(options.get(0));
+    return new FileInputStreamBenchmark(bufferSize);
   }
 
   private FileBenchmark instantiateFileChannel(List<String> options) {

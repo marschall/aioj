@@ -51,4 +51,13 @@ class AiojMmapBenchmark implements FileBenchmark {
     return sum;
   }
 
+  @Override
+  public String getDescription() {
+    if (this.madvise) {
+      return "aioj mmap with madvise";
+    } else {
+      return "aioj mmap without madvise";
+    }
+  }
+
 }

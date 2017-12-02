@@ -7,15 +7,15 @@ import java.io.IOException;
 
 class FileInputStreamBenchmark implements FileBenchmark {
 
-  private final int blockSize;
+  private final int bufferSize;
 
   FileInputStreamBenchmark(int blockSize) {
-    this.blockSize = blockSize;
+    this.bufferSize = blockSize;
   }
 
   @Override
   public long read(String fileName) throws IOException {
-    byte[] buffer = new byte[this.blockSize];
+    byte[] buffer = new byte[this.bufferSize];
     long sum = 0L;
     try (FileInputStream stream = new FileInputStream(fileName)) {
       int read = stream.read(buffer);
@@ -25,6 +25,11 @@ class FileInputStreamBenchmark implements FileBenchmark {
       }
     }
     return sum;
+  }
+
+  @Override
+  public String getDescription() {
+    return "FileInputStream with " + ByteFormatUtils.formatBufferSize(this.bufferSize) + " buffer size";
   }
 
 }

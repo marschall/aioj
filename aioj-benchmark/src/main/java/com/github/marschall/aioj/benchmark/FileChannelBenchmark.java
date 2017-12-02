@@ -40,4 +40,13 @@ class FileChannelBenchmark implements FileBenchmark {
     }
   }
 
+  @Override
+  public String getDescription() {
+    if (this.offHeap) {
+      return "FileChannel with " + ByteFormatUtils.formatBufferSize(this.bufferSize) + " offheap buffer size";
+    } else {
+      return "FileChannel with " + ByteFormatUtils.formatBufferSize(this.bufferSize) + " heap buffer size";
+    }
+  }
+
 }

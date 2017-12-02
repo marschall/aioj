@@ -31,4 +31,13 @@ class AiojReadBenchmark implements FileBenchmark {
     return 0;
   }
 
+  @Override
+  public String getDescription() {
+    if (this.direct) {
+      return "aioj read with " + ByteFormatUtils.formatBufferSize(this.bufferSize) + " buffer size, direct IO";
+    } else {
+      return "aioj read with " + ByteFormatUtils.formatBufferSize(this.bufferSize) + " buffer size, non-direct IO";
+    }
+  }
+
 }
