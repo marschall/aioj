@@ -9,11 +9,11 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
 
-public class MappedByteBufferBenchmark implements FileBenchmark {
+class MappedByteBufferBenchmark implements FileBenchmark {
 
   private final boolean force;
 
-  public MappedByteBufferBenchmark(boolean force) {
+  MappedByteBufferBenchmark(boolean force) {
     this.force = force;
   }
 

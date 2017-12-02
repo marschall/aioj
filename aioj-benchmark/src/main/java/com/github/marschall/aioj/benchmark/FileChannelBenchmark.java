@@ -8,14 +8,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
 
-public class FileChannelBenchmark implements FileBenchmark {
+class FileChannelBenchmark implements FileBenchmark {
 
   private final int bufferSize;
-  private final boolean offHead;
+  private final boolean offHeap;
 
-  public FileChannelBenchmark(int bufferSize, boolean offHead) {
+  FileChannelBenchmark(int bufferSize, boolean offHeap) {
     this.bufferSize = bufferSize;
-    this.offHead = offHead;
+    this.offHeap = offHeap;
   }
 
   @Override
@@ -33,7 +33,7 @@ public class FileChannelBenchmark implements FileBenchmark {
   }
 
   private ByteBuffer createBuffer() {
-    if (this.offHead) {
+    if (this.offHeap) {
       return ByteBuffer.allocateDirect(this.bufferSize);
     } else {
       return ByteBuffer.allocate(this.bufferSize);

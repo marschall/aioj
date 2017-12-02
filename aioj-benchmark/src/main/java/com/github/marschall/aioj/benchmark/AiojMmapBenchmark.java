@@ -14,11 +14,11 @@ import com.github.marschall.aioj.capi.LibIo;
 import com.github.marschall.aioj.capi.LibMemory;
 import com.github.marschall.aioj.lowlevel.FileDescriptor;
 
-public class AiojMmapBenchmark implements FileBenchmark {
+class AiojMmapBenchmark implements FileBenchmark {
 
   private final boolean madvise;
 
-  public AiojMmapBenchmark(boolean madvise) {
+  AiojMmapBenchmark(boolean madvise) {
     this.madvise = madvise;
   }
 

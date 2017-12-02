@@ -5,11 +5,11 @@ import static com.github.marschall.aioj.benchmark.BufferUtils.sum;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class FileInputStreamBenchmark implements FileBenchmark {
+class FileInputStreamBenchmark implements FileBenchmark {
 
   private final int blockSize;
 
-  public FileInputStreamBenchmark(int blockSize) {
+  FileInputStreamBenchmark(int blockSize) {
     this.blockSize = blockSize;
   }
 
