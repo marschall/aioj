@@ -1,8 +1,11 @@
 package com.github.marschall.aioj.benchmark;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public final class FileBenchmarks {
 
@@ -13,31 +16,38 @@ public final class FileBenchmarks {
     }
     String benchmarkName = args[0];
     String fileName = args[args.length - 1];
-    List<String> options = Arrays.asList(args).subList(0, args.length);
+    List<String> options = Arrays.asList(args).subList(1, args.length - 1);
 
-    FileBenchmark benchmark = instantiate(benchmarkName, options);
+    FileBenchmark benchmark = this.instantiate(benchmarkName, options);
 
     long start = System.currentTimeMillis();
     long sum = benchmark.read(fileName);
     long end = System.currentTimeMillis();
 
-    System.out.printf("%s%ntook %d ms sum is %d %n----%n", benchmark.getDescription(), end - start, sum);
+    this.reportResult(fileName, benchmark, end - start, sum);
+  }
+
+  private void reportResult(String fileName, FileBenchmark benchmark, long milliseconds, long sum) throws IOException {
+    long fileSize = Files.size(Paths.get(fileName));
+    long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
+    System.out.printf("%s%ntook %d ms, throughput %s%nsum is %d %n----%n",
+            benchmark.getDescription(), milliseconds, ByteFormatUtils.formatToughput(fileSize, seconds), sum);
   }
 
   private FileBenchmark instantiate(String benchmark, List<String> options) {
     switch (benchmark) {
       case "aioj-read":
-        return instantiateAiojRead(options);
+        return this.instantiateAiojRead(options);
       case "aioj-pread":
-        return instantiateAiojPread(options);
+        return this.instantiateAiojPread(options);
       case "aioj-mmap":
-        return instantiateAiojMmap(options);
+        return this.instantiateAiojMmap(options);
       case "FileChannel":
-        return instantiateFileChannel(options);
+        return this.instantiateFileChannel(options);
       case "FileInputStream":
-        return instantiateFileInputStream(options);
+        return this.instantiateFileInputStream(options);
       case "MappedByteBuffer":
-        return instantiateMappedByteBuffer(options);
+        return this.instantiateMappedByteBuffer(options);
       default:
         throw new IllegalBenchmarkArgumentExcetpion("unknown benchmark: " + benchmark);
     }
