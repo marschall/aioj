@@ -10,6 +10,7 @@
 #include <errno.h>     // errno
 
 #include "jniUtil.h"
+#include "com_github_marschall_aioj_capi_LibIo.h"
 
 int throwIoException(JNIEnv *env, int errorCode)
 {

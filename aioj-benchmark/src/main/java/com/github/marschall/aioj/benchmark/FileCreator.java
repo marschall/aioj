@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class FileCreator {
@@ -23,13 +25,16 @@ public class FileCreator {
       buffer.put(i, (byte) i);
     }
 
-    try (FileChannel channel = FileChannel.open(Paths.get(fileName), WRITE, CREATE_NEW)) {
+    Path path = Paths.get(fileName);
+    Files.createDirectories(path.getParent());
+    try (FileChannel channel = FileChannel.open(path, WRITE, CREATE_NEW)) {
       long written = 0L;
       while (written < size) {
         int toWrite = Math.toIntExact(Math.min(bufferSize, size - written));
         buffer.position(0);
         buffer.limit(toWrite);
-        writeAll(buffer, channel);
+        this.writeAll(buffer, channel);
+        written += toWrite;
       }
     }
 
@@ -54,6 +59,7 @@ public class FileCreator {
     try {
       creator.createFile(fileName, fileSize);
     } catch (IOException e) {
+      e.printStackTrace();
       System.err.println(e.getMessage());
       System.exit(-1);
     }

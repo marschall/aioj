@@ -14,6 +14,9 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>aioj-core</artifactId>
       <version>${project.version}</version>
+      <!-- 
+      <type>nar</type>
+       -->
     </dependency>
     
     <dependency>

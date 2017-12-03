@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # $JAVA_HOME/bin/java \ -cp target/aioj-benchmark-0.1.0-SNAPSHOT.jar \
 #   com.github.marschall.aioj.benchmark.FileBenchmarks aioj-mmap true src/main/input/100g.bin
 # 

@@ -72,7 +72,7 @@ public final class OpenArgument {
    * specified in flags; if neither O_CREAT nor O_TMPFILE is specified, then
    * mode is ignored. The effective mode is modified by the process's umask in
    * the usual way: in the absence of a default ACL, the mode of the created
-   * file is (mode & ~umask). Note that this mode applies only to future
+   * file is (mode &amp; ~umask). Note that this mode applies only to future
    * accesses of the newly created file; the open() call that creates a
    * read-only file may well return a read/write file descriptor.
    */
