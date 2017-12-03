@@ -1,0 +1,32 @@
+FileChannel with 8k heap buffer size
+took 195084 ms, throughput 525.1 m/s
+sum is -53687091200 
+----
+FileChannel with 8k offheap buffer size
+took 195035 ms, throughput 525.1 m/s
+sum is -53687091200 
+----
+FileChannel with 128k heap buffer size
+took 195056 ms, throughput 525.1 m/s
+sum is -53687091200 
+----
+FileChannel with 128k offheap buffer size
+took 194982 ms, throughput 527.8 m/s
+sum is -53687091200 
+----
+FileInputStream with 8k buffer size
+took 194926 ms, throughput 527.8 m/s
+sum is -53687091200 
+----
+FileInputStream with 128k buffer size
+took 195015 ms, throughput 525.1 m/s
+sum is -53687091200 
+----
+MappedByteBuffer with force
+took 196899 ms, throughput 522.4 m/s
+sum is -53687091200 
+----
+MappedByteBuffer without force
+took 196978 ms, throughput 522.4 m/s
+sum is -53687091200 
+----
