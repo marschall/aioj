@@ -2,6 +2,8 @@ package com.github.marschall.aioj.capi;
 
 public final class OpenArgument {
 
+  // TODO assertions
+
   private OpenArgument() {
     throw new AssertionError("not instantiable");
   }
