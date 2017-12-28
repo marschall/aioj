@@ -6,6 +6,7 @@
 #include <errno.h>
 
 #include "jniUtil.h"
+#include "com_github_marschall_aioj_capi_LibMemory.h"
 
 int throwAllocationFailedException(JNIEnv *env, int errorCode)
 {

@@ -23,10 +23,12 @@ class FileChannelBenchmark implements FileBenchmark {
     ByteBuffer buffer = this.createBuffer();
     long sum = 0L;
     try (FileChannel channel = FileChannel.open(Paths.get(fileName), READ)) {
-      int read = channel.read(buffer);
+      int read = 0;
       while (read != -1) {
         sum += sum(buffer, read);
+        buffer.clear();
         read = channel.read(buffer);
+        buffer.flip();
       }
     }
     return sum;
