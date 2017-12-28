@@ -10,88 +10,92 @@ import java.util.Set;
 
 import com.github.marschall.aioj.capi.StructStat;
 
-public final class Stat implements PosixFileAttributes {
+public final class Stat {
 
-  private final StructStat structStat;
-
-  private Stat(StructStat structStat) {
-    this.structStat = structStat;
+  public static PosixFileAttributes valueOf(StructStat structStat) {
+    return new StatImpl(structStat);
   }
 
-  public static Stat valueOf(StructStat structStat) {
-    return new Stat(structStat);
-  }
+  static final class StatImpl implements PosixFileAttributes {
 
-  private static FileTime fileTime(int sec, long nsec) {
-    return FileTime.from(Instant.ofEpochSecond(sec, nsec));
-  }
+    private final StructStat structStat;
 
-  @Override
-  public FileTime lastModifiedTime() {
-    return fileTime(this.structStat.st_mtim_sec, this.structStat.st_mtim_nsec);
-  }
+    StatImpl(StructStat structStat) {
+      this.structStat = structStat;
+    }
 
-  @Override
-  public FileTime lastAccessTime() {
-    return fileTime(this.structStat.st_atim_sec, this.structStat.st_atim_nsec);
-  }
+    private static FileTime fileTime(int sec, long nsec) {
+      return FileTime.from(Instant.ofEpochSecond(sec, nsec));
+    }
 
-  @Override
-  public FileTime creationTime() {
-    return fileTime(this.structStat.st_ctim_sec, this.structStat.st_ctim_nsec);
-  }
+    @Override
+    public FileTime lastModifiedTime() {
+      return fileTime(this.structStat.st_mtim_sec, this.structStat.st_mtim_nsec);
+    }
 
-  private int getFileType() {
-    return this.structStat.st_mode & StructStat.S_IFMT;
-  }
+    @Override
+    public FileTime lastAccessTime() {
+      return fileTime(this.structStat.st_atim_sec, this.structStat.st_atim_nsec);
+    }
 
-  @Override
-  public boolean isRegularFile() {
-    return this.getFileType() == StructStat.S_IFREG;
-  }
+    @Override
+    public FileTime creationTime() {
+      return fileTime(this.structStat.st_ctim_sec, this.structStat.st_ctim_nsec);
+    }
 
-  @Override
-  public boolean isDirectory() {
-    return this.getFileType() == StructStat.S_IFDIR;
-  }
+    private int getFileType() {
+      return this.structStat.st_mode & StructStat.S_IFMT;
+    }
 
-  @Override
-  public boolean isSymbolicLink() {
-    return this.getFileType() == StructStat.S_IFLNK;
-  }
+    @Override
+    public boolean isRegularFile() {
+      return this.getFileType() == StructStat.S_IFREG;
+    }
 
-  @Override
-  public boolean isOther() {
-    return !(this.isRegularFile() || this.isDirectory() || this.isSymbolicLink());
-  }
+    @Override
+    public boolean isDirectory() {
+      return this.getFileType() == StructStat.S_IFDIR;
+    }
 
-  @Override
-  public long size() {
-    return this.structStat.st_size;
-  }
+    @Override
+    public boolean isSymbolicLink() {
+      return this.getFileType() == StructStat.S_IFLNK;
+    }
 
-  @Override
-  public Object fileKey() {
-    // the API suggests returning null is OK
-    return null;
-  }
+    @Override
+    public boolean isOther() {
+      return !(this.isRegularFile() || this.isDirectory() || this.isSymbolicLink());
+    }
 
-  @Override
-  public UserPrincipal owner() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @Override
+    public long size() {
+      return this.structStat.st_size;
+    }
 
-  @Override
-  public GroupPrincipal group() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @Override
+    public Object fileKey() {
+      // the API suggests returning null is OK
+      return null;
+    }
 
-  @Override
-  public Set<PosixFilePermission> permissions() {
-    // TODO Auto-generated method stub
-    return null;
+    @Override
+    public UserPrincipal owner() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public GroupPrincipal group() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public Set<PosixFilePermission> permissions() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
   }
 
 }
