@@ -42,6 +42,10 @@ public final class FileDescriptor implements AutoCloseable {
     LibIo.fadvise(this.fd, offset, len, flags);
   }
 
+  public long sendFile(FileDescriptor in, long offset, long count) throws IOException {
+    return LibIo.sendfile(this.fd, in.fd, offset, count);
+  }
+
   public ByteBuffer mmap(ByteBuffer buffer, int length, int prot, int flags, long offset) throws IOException {
     return LibIo.mmap(buffer, length, prot, flags, this.fd, offset);
   }
