@@ -6,12 +6,52 @@ import java.util.Objects;
 
 public final class LibIo {
 
+  private static final int PATH_MAX = 4096;
+
+  private static final int FILENAME_MAX = 4096;
+
   static {
     LibraryLoader.assertInitialized();
   }
 
+  public static void fstat(int fd, StructStat statbuf) throws IOException {
+    Objects.requireNonNull(statbuf, "statbuf");
+    int result = fstat0(fd, statbuf);
+    if (result != 0) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not fstat() file");
+    }
+  }
+
+  private static native int fstat0(int fd, StructStat statbuf) throws IOException;
+
+  public static void stat(byte[] pathName, StructStat statbuf) throws IOException {
+    // TODO compare against PATH_MAX
+    Objects.requireNonNull(pathName, "pathName");
+    Objects.requireNonNull(statbuf, "statbuf");
+    int result = stat0(pathName, statbuf);
+    if (result != 0) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not stat() file");
+    }
+  }
+
+  private static native int stat0(byte[] pathName, StructStat statbuf) throws IOException;
+
+  public static void stat(String pathName, StructStat statbuf) throws IOException {
+    Objects.requireNonNull(pathName, "pathName");
+    Objects.requireNonNull(statbuf, "statbuf");
+    int result = stat0(pathName, statbuf);
+    if (result != 0) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not stat() file");
+    }
+  }
+
+  private static native int stat0(String pathName, StructStat statbuf) throws IOException;
+
   public static int open(byte[] pathName, int flags, int mode) throws IOException {
-    Objects.requireNonNull(pathName, "pathspec");
+    Objects.requireNonNull(pathName, "pathName");
     int fd = open0(pathName, pathName.length, flags, mode);
     if (fd == -1) {
       // this shouldn't happen, JNI should already have thrown an exception
@@ -23,8 +63,21 @@ public final class LibIo {
   // http://man7.org/linux/man-pages/man2/open.2.html
   private static native int open0(byte[] pathName, int pathNameLength, int flags, int mode) throws IOException;
 
+  public static int open(String pathName, int flags, int mode) throws IOException {
+    Objects.requireNonNull(pathName, "pathName");
+    int fd = open0(pathName, pathName.length(), flags, mode);
+    if (fd == -1) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not open() file");
+    }
+    return fd;
+  }
+
+  // http://man7.org/linux/man-pages/man2/open.2.html
+  private static native int open0(String pathName, int pathNameLength, int flags, int mode) throws IOException;
+
   public static int open(byte[] pathname, int flags) throws IOException {
-    Objects.requireNonNull(pathname, "pathspec");
+    Objects.requireNonNull(pathname, "pathname");
     int fd = open0(pathname, pathname.length, flags);
     if (fd == -1) {
       // this shouldn't happen, JNI should already have thrown an exception
@@ -35,6 +88,19 @@ public final class LibIo {
 
   // http://man7.org/linux/man-pages/man2/open.2.html
   private static native int open0(byte[] pathName, int pathNameLength, int flags) throws IOException;
+
+  public static int open(String pathname, int flags) throws IOException {
+    Objects.requireNonNull(pathname, "pathname");
+    int fd = open0(pathname, pathname.length(), flags);
+    if (fd == -1) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not open() file");
+    }
+    return fd;
+  }
+
+  // http://man7.org/linux/man-pages/man2/open.2.html
+  private static native int open0(String pathName, int pathNameLength, int flags) throws IOException;
 
   public static void close(int fd)  throws IOException {
     int result = close0(fd);

@@ -8,6 +8,8 @@
 #include <stdlib.h>    // malloc
 #include <string.h>    // strerror_r
 #include <errno.h>     // errno
+#include <limits.h>     // PATH_MAX
+/* #include <stdio.h>     // FILENAME_MAX */
 
 #include "jniUtil.h"
 
@@ -91,6 +93,42 @@ jint openByte3
   return fd;
 }
 
+
+jint openString3
+  (JNIEnv *env, jstring jpathname, jint jpathnamelen, jint flags, jint mode)
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+  _Static_assert (sizeof(jint) == sizeof(mode_t), "sizeof(jint) == sizeof(mode_t)");
+
+  char pathname[PATH_MAX];
+  jsize utf8len = (*env)->GetStringUTFRegion(env, jpathname);
+  if (utf8len >= PATH_MAX)
+  {
+    throwIoException(env, ENAMETOOLONG);
+    // we return -1 from C but an IOException upon entry into Java
+    return -1;
+  }
+  pathname[utf8len] = 0;
+
+  (*env)->GetStringUTFRegion(env, jpathname, 0, jpathnamelen, &pathname);
+  // GetStringUTFRegion throws StringIndexOutOfBoundsException on invalid indices
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return -1;
+  }
+
+  int fd = open(pathname, flags, mode);
+
+  if (fd == -1)
+  {
+    // save the error code
+    int errorcode = errno;
+    throwIoException(env, errorcode);
+    // we will end up returning -1 from C but an IOException upon entry into Java
+  }
+  return fd;
+}
+
 jint openByte2
   (JNIEnv *env, jbyteArray jpathname, jint jpathnamelenlen, jint flags)
 {
@@ -118,6 +156,41 @@ jint openByte2
   {
     throwIoException(env, errorcode);
   }
+  return fd;
+}
+
+jint openString2
+  (JNIEnv *env, jstring jpathname, jint jpathnamelenlen, jint flags)
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+
+  char pathname[PATH_MAX];
+  jsize utf8len = (*env)->GetStringUTFRegion(env, jpathname);
+  if (utf8len >= PATH_MAX)
+  {
+    throwIoException(env, ENAMETOOLONG);
+    // we return -1 from C but an IOException upon entry into Java
+    return -1;
+  }
+  pathname[utf8len] = 0;
+
+  (*env)->GetStringUTFRegion(env, jpathname, 0, jpathnamelen, &pathname);
+  // GetStringUTFRegion throws StringIndexOutOfBoundsException on invalid indices
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return -1;
+  }
+
+
+  int fd = open(pathname, flags);
+  if (fd == -1)
+  {
+    // save the error code
+    int errorcode = errno;
+    throwIoException(env, errorcode);
+    // we will end up returning -1 from C but an IOException upon entry into Java
+  }
+
   return fd;
 }
 

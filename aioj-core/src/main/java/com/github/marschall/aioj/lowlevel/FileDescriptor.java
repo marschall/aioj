@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import com.github.marschall.aioj.capi.LibIo;
+import com.github.marschall.aioj.capi.StructStat;
 
 public final class FileDescriptor implements AutoCloseable {
 
@@ -14,22 +15,22 @@ public final class FileDescriptor implements AutoCloseable {
   }
 
   public static FileDescriptor open(String pathname, int flags) throws IOException {
-    int fd = LibIo.open(null, flags);
+    int fd = LibIo.open(pathname, flags);
     return new FileDescriptor(fd);
   }
 
   public static FileDescriptor open(String pathname, int flags, int mode) throws IOException {
-    int fd = LibIo.open(null, flags, mode);
+    int fd = LibIo.open(pathname, flags, mode);
     return new FileDescriptor(fd);
   }
 
   public static FileDescriptor open(byte[] pathname, int flags) throws IOException {
-    int fd = LibIo.open(null, flags);
+    int fd = LibIo.open(pathname, flags);
     return new FileDescriptor(fd);
   }
 
   public static FileDescriptor open(byte[] pathname, int flags, int mode) throws IOException {
-    int fd = LibIo.open(null, flags, mode);
+    int fd = LibIo.open(pathname, flags, mode);
     return new FileDescriptor(fd);
   }
 
@@ -47,6 +48,16 @@ public final class FileDescriptor implements AutoCloseable {
 
   public ByteBuffer mmap(int length, int prot, int flags, long offset) throws IOException {
     return LibIo.mmap(null, length, prot, flags, this.fd, offset);
+  }
+
+  public void fstat(StructStat statbuf) throws IOException {
+    LibIo.fstat(this.fd, statbuf);
+  }
+
+  public StructStat fstat() throws IOException {
+    StructStat statbuf = new StructStat();
+    this.fstat(statbuf);
+    return statbuf;
   }
 
   @Override
