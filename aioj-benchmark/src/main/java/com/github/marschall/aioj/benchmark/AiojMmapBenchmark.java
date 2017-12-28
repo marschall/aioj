@@ -26,8 +26,7 @@ class AiojMmapBenchmark implements FileBenchmark {
   public long read(String fileName) throws IOException {
     long sum = 0L;
     try (FileDescriptor fileDescriptor = FileDescriptor.open(fileName, O_RDONLY)) {
-      // FIXME
-      long size = 0L;
+      long size = fileDescriptor.fstat().st_size;
       int increment = Integer.MAX_VALUE;
       for (long position = 0; position < size; position += increment) {
         int mapSize = Math.toIntExact(Math.min(size, position + increment) - position);
