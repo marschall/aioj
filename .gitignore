@@ -1,3 +1,10 @@
 target/
 *g.bin
+aio
+allocate_aligned
+assertions
+vlocksize
+madvise-argument
+mmap-argument
+open-argument
 
