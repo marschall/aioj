@@ -1,5 +1,10 @@
 package com.github.marschall.aioj.capi;
 
+/**
+ * Arguments for mmap()
+ * <p>
+ *
+ */
 public final class MmapArgument {
 
   private MmapArgument() {

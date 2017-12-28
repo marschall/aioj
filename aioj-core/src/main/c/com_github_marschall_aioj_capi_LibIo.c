@@ -1,14 +1,15 @@
 #include <jni.h>
 
-#include <sys/types.h> // open
-#include <sys/stat.h>  // open
-#include <sys/mman.h>  // mincore
-#include <fcntl.h>     // open
-#include <unistd.h>    // close, mincore
-#include <stdlib.h>    // malloc
-#include <string.h>    // strerror_r
-#include <errno.h>     // errno
-#include <limits.h>     // PATH_MAX
+#include <sys/types.h>    // open
+#include <sys/stat.h>     // open
+#include <sys/mman.h>     // mincore
+#include <sys/sendfile.h>
+#include <fcntl.h>        // open
+#include <unistd.h>       // close, mincore
+#include <stdlib.h>       // malloc
+#include <string.h>       // strerror_r
+#include <errno.h>        // errno
+#include <limits.h>       // PATH_MAX
 /* #include <stdio.h>     // FILENAME_MAX */
 
 #include "jniUtil.h"
@@ -17,28 +18,6 @@
 int throwIoException(JNIEnv *env, int errorCode)
 {
   return throwJniException(env, errorCode, "java/io/IOException");
-}
-
-char *jbyteArrayToCString(JNIEnv *env, jbyteArray array, jint len)
-{
-  _Static_assert (sizeof(jbyte) == sizeof(char), "sizeof(jbyte) == sizeof(char)");
-
-  char *buf = malloc(sizeof(char) * (size_t) len + 1);
-  if (buf == NULL)
-  {
-    return NULL;
-  }
-
-  (*env)->GetByteArrayRegion(env, array, 0, len, (jbyte *) buf);
- 
-  // GetByteArrayRegion throws ArrayIndexOutOfBoundsException on invalid indices
-  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
-  {
-    return NULL;
-  }
-  buf[len] = 0; // terminator
- 
-  return buf;
 }
 
 unsigned char *jbyteArrayToUnsignedCharStar(JNIEnv *env, jbyteArray array, jint len)
@@ -63,34 +42,51 @@ unsigned char *jbyteArrayToUnsignedCharStar(JNIEnv *env, jbyteArray array, jint 
 }
 
 
+jlong sendfile0
+  (JNIEnv *env, jint out_fd, jint in_fd, jlong offset, jlong count)
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+  _Static_assert (sizeof(off_t) == sizeof(jlong), "sizeof(off_t) == sizeof(jlong)");
+  _Static_assert (sizeof(size_t) == sizeof(jlong), "sizeof(size_t) == sizeof(jlong)");
+  _Static_assert (sizeof(ssize_t) == sizeof(jlong), "sizeof(ssize_t) == sizeof(jlong)");
+
+  ssize_t transferred = sendfile(out_fd, in_fd, offset, count);
+
+  if (transferred == -1)
+  {
+    // save the error code
+    int errorcode = errno;
+    throwIoException(env, errorcode);
+    // we will end up returning -1 from C but an IOException upon entry into Java
+  }
+  return transferred;
+}
+
 jint openByte3
   (JNIEnv *env, jbyteArray jpathname, jint jpathnamelen, jint flags, jint mode)
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
   _Static_assert (sizeof(jint) == sizeof(mode_t), "sizeof(jint) == sizeof(mode_t)");
 
-  char *pathname = jbyteArrayToCString(env, jpathname, jpathnamelen);
-  if (pathname == NULL)
+  char pathname[PATH_MAX];
+  (*env)->GetByteArrayRegion(env, jpathname, 0, jpathnamelen, (jbyte *) pathname);
+  // GetByteArrayRegion throws ArrayIndexOutOfBoundsException on invalid indices
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
   {
-    return -1;
+    return NULL;
   }
+  buf[jpathnamelen] = 0; // terminator
   
   int fd = open(pathname, flags, mode);
   
-  // save the error code
-  int errorcode = 0;
   if (fd == -1)
   {
+    // save the error code
+    int errorcode = 0;
     errorcode = errno;
-  }
-  
-  // free pathname as early as possible
-  free(pathname);
-  
-  if (fd == -1)
-  {
     throwIoException(env, errorcode);
   }
+  
   return fd;
 }
 
@@ -135,28 +131,26 @@ jint openByte2
 {
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
 
-  char *pathname = jbyteArrayToCString(env, jpathname, jpathnamelenlen);
-  if (pathname == NULL)
+  char pathname[PATH_MAX];
+  (*env)->GetByteArrayRegion(env, jpathname, 0, jpathnamelen, (jbyte *) pathname);
+  // GetByteArrayRegion throws ArrayIndexOutOfBoundsException on invalid indices
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
   {
-    return -1;
+    return NULL;
   }
+  buf[jpathnamelen] = 0; // terminator
   
   
   int fd = open(pathname, flags);
-  // save the error code
-  int errorcode = 0;
+
   if (fd == -1)
   {
-    errorcode = errno;
-  }
-  
-  // free pathname as early as possible
-  free(pathname);
-  
-  if (fd == -1)
-  {
+    // save the error code
+    int errorcode = errno;
     throwIoException(env, errorcode);
+    // we will end up returning -1 from C but an IOException upon entry into Java
   }
+
   return fd;
 }
 
