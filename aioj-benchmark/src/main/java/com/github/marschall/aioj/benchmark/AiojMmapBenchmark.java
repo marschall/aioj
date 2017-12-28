@@ -2,9 +2,10 @@ package com.github.marschall.aioj.benchmark;
 
 import static com.github.marschall.aioj.benchmark.BufferUtils.sum;
 import static com.github.marschall.aioj.capi.MadviseArgument.MADV_DONTNEED;
-import static com.github.marschall.aioj.capi.MadviseArgument.MADV_FREE;
 import static com.github.marschall.aioj.capi.MadviseArgument.MADV_SEQUENTIAL;
 import static com.github.marschall.aioj.capi.MadviseArgument.MADV_WILLNEED;
+import static com.github.marschall.aioj.capi.MmapArgument.MAP_SHARED;
+import static com.github.marschall.aioj.capi.MmapArgument.PROT_READ;
 import static com.github.marschall.aioj.capi.OpenArgument.O_RDONLY;
 
 import java.io.IOException;
@@ -30,8 +31,8 @@ class AiojMmapBenchmark implements FileBenchmark {
       int increment = Integer.MAX_VALUE;
       for (long position = 0; position < size; position += increment) {
         int mapSize = Math.toIntExact(Math.min(size, position + increment) - position);
-        int prot = 0;
-        int flags = 0;
+        int prot = PROT_READ;
+        int flags = MAP_SHARED;
         ByteBuffer buffer = fileDescriptor.mmap(mapSize, prot, flags, mapSize);
 
         try {
@@ -40,7 +41,7 @@ class AiojMmapBenchmark implements FileBenchmark {
           }
           sum  += sum(buffer, Math.toIntExact(mapSize));
           if (this.madvise) {
-            LibMemory.madvise(buffer, MADV_DONTNEED | MADV_FREE);
+            LibMemory.madvise(buffer, MADV_DONTNEED);
           }
         } finally {
           LibIo.munmap(buffer);
