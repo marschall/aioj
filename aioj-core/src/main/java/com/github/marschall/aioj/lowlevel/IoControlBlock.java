@@ -23,7 +23,7 @@ public final class IoControlBlock {
     POSITIONED_READ(StructIocb.IOCB_CMD_PREAD),
 
     /**
-     * Positioned write,´ corresponds to pwrite() system call.
+     * Positioned write, corresponds to pwrite() system call.
      */
     POSITIONED_WRITE(StructIocb.IOCB_CMD_PWRITE),
 

@@ -11,7 +11,6 @@ public final class FileBridge {
     throw new AssertionError("not instantiable");
   }
 
-
   public static FileDescriptor open(File file, int flags) throws IOException {
     return FileDescriptor.open(file.toString(), flags);
   }

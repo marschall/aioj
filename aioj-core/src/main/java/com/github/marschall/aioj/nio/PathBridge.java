@@ -12,7 +12,6 @@ public final class PathBridge {
     throw new AssertionError("not instantiable");
   }
 
-
   public static FileDescriptor open(Path path, int flags) throws IOException {
     requireDefaultFileSystem(path);
     return FileDescriptor.open(path.toString(), flags);

@@ -10,10 +10,15 @@
 #include <string.h>       // strerror_r
 #include <errno.h>        // errno
 #include <limits.h>       // PATH_MAX
-/* #include <stdio.h>     // FILENAME_MAX */
+#include <stdio.h>        // FILENAME_MAX
 
 #include "jniUtil.h"
 #include "com_github_marschall_aioj_capi_LibIo.h"
+
+
+_Static_assert (com_github_marschall_aioj_capi_LibIo_PATH_MAX == PATH_MAX, "com_github_marschall_aioj_capi_LibIo_PATH_MAX == PATH_MAX");
+_Static_assert (com_github_marschall_aioj_capi_LibIo_FILENAME_MAX == FILENAME_MAX, "com_github_marschall_aioj_capi_LibIo_FILENAME_MAX == FILENAME_MAX");
+_Static_assert (com_github_marschall_aioj_capi_LibIo_NULL == NULL, "com_github_marschall_aioj_capi_LibIo_NULL == NULL");
 
 int throwIoException(JNIEnv *env, int errorCode)
 {
