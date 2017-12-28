@@ -37,8 +37,6 @@ public class FileCreator {
         written += toWrite;
       }
     }
-
-
   }
 
   private void writeAll(ByteBuffer buffer, WritableByteChannel channel) throws IOException {
@@ -65,7 +63,6 @@ public class FileCreator {
     }
 
     System.exit(0);
-
   }
 
 }

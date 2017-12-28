@@ -22,8 +22,6 @@ import org.openjdk.jmh.infra.Blackhole;
 @State(Scope.Benchmark)
 public class ArrayAccessBenchmarks {
 
-
-
   @Param("1024")
   public int bufferSize;
 
