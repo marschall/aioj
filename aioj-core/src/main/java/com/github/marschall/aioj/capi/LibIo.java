@@ -49,8 +49,7 @@ public final class LibIo {
    *         retry the call if there were unsent bytes.
    * @throws IOException
    *           if the call fails
-   * @see <a href=
-   *      "http://man7.org/linux/man-pages/man2/sendfile.2.html">sendfile(2)</a>
+   * @see <a href="http://man7.org/linux/man-pages/man2/sendfile.2.html">sendfile(2)</a>
    */
   public static long sendfile(int out_fd, int in_fd, long offset, long count) throws IOException {
     long transferred = sendfile0(out_fd, in_fd, offset, count);
@@ -579,10 +578,11 @@ public final class LibIo {
    * @throws IOException
    *           if the call fails
    * @see <a href="https://linux.die.net/man/2/lseek">lseek(2)</a>
+   * @see LseekArgument
    */
   public static long lseek(int fd, long offset, int whence)  throws IOException {
     long result = lseek0(fd, offset, whence);
-    if (result == (offset - 1)) {
+    if (result == - 1) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("could not lseek() file");
     }
@@ -704,7 +704,8 @@ public final class LibIo {
    */
   public static ByteBuffer mmap(ByteBuffer buffer, int length, int prot, int flags, int fd, long offset) throws IOException {
     if (buffer != null) {
-
+      // null is allowed as a hint
+      BufferAssertions.requireDirect(buffer);
     }
     ByteBuffer result = mmap0(buffer, length, prot, flags, fd, offset);
     if (result == null) {

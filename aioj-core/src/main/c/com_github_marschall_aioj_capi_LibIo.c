@@ -390,6 +390,11 @@ jobject mmap0
   else
   {
     addr = (*env)->GetDirectBufferAddress(env, buffer);
+    if (addr == NULL)
+    {
+      /* if the memory region is undefined or if JNI access to direct buffers is not supported by this virtual machine */
+      return -1;
+    }
   }
   
   void *result = mmap(addr, (size_t) length, (int) prot, (int) flags, (int) fd, (off_t) offset);
@@ -411,7 +416,11 @@ jint munmap0
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
 
   void *addr = (*env)->GetDirectBufferAddress(env, buffer);
-  // TODO null check
+  if (addr == NULL)
+  {
+    /* if the memory region is undefined or if JNI access to direct buffers is not supported by this virtual machine */
+    return -1;
+  }
   int result = munmap(addr, (size_t) length);
   if (result != 0)
   {
