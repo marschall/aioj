@@ -511,8 +511,8 @@ public final class LibIo {
    *          reference to a file which has been removed using unlink(2), the
    *          file is deleted.
    * @throws IOException
-   *           if the call fails <a href=
-   *           "http://man7.org/linux/man-pages/man2/close.2.html">close(2)</a>
+   *           if the call fails
+   * @see <a href="http://man7.org/linux/man-pages/man2/close.2.html">close(2)</a>
    */
   public static void close(int fd)  throws IOException {
     int result = close0(fd);
@@ -524,6 +524,62 @@ public final class LibIo {
 
   private static native int close0(int fd) throws IOException;
 
+  /**
+   * Reposition read/write file offset.
+   * <p>
+   * The lseek() function repositions the offset of the open file associated
+   * with the file descriptor fd to the argument offset according to the
+   * directive whence as follows:
+   * <ul>
+   * <li>{@link LseekArgument#SEEK_SET}</li>
+   * <li>{@link LseekArgument#SEEK_CUR}</li>
+   * <li>{@link LseekArgument#SEEK_END}</li>
+   * </ul>
+   * The lseek() function allows the file offset to be set beyond the end of the
+   * file (but this does not change the size of the file). If data is later
+   * written at this point, subsequent reads of the data in the gap (a "hole")
+   * return null bytes (aq\0aq) until data is actually written into the gap.
+   *
+   * <h2>Seeking file data and holes</h2>
+   * Since version 3.1, Linux supports the following additional values for
+   * whence:
+   * <ul>
+   * <li>{@link LseekArgument#SEEK_DATA}</li>
+   * <li>{@link LseekArgument#SEEK_HOLE}</li>
+   * </ul>
+   * Adjust the file offset to the next hole in the file greater than or equal
+   * to offset. If offset points into the middle of a hole, then the file offset
+   * is set to offset. If there is no hole past offset, then the file offset is
+   * adjusted to the end of the file (i.e., there is an implicit hole at the end
+   * of any file). In both of the above cases, lseek() fails if offset points
+   * past the end of the file.
+   * <p>
+   * These operations allow applications to map holes in a sparsely allocated
+   * file. This can be useful for applications such as file backup tools, which
+   * can save space when creating backups and preserve holes, if they have a
+   * mechanism for discovering holes.
+   * <p>
+   * For the purposes of these operations, a hole is a sequence of zeros that
+   * (normally) has not been allocated in the underlying file storage. However,
+   * a file system is not obliged to report holes, so these operations are not a
+   * guaranteed mechanism for mapping the storage space actually allocated to a
+   * file. (Furthermore, a sequence of zeros that actually has been written to
+   * the underlying storage may not be reported as a hole.) In the simplest
+   * implementation, a file system can support the operations by making
+   * {@link LseekArgument#SEEK_HOLE} always return the offset of the end of the
+   * file, and making {@link LseekArgument#SEEK_DATA} always return offset
+   * (i.e., even if the location referred to by offset is a hole, it can be
+   * considered to consist of data that is a sequence of zeros).
+   *
+   * @param fd the open file
+   * @param offset the offset to be interpreted by {@code whence}
+   * @param whence the directive
+   * @return Upon successful completion, lseek() returns the resulting offset
+   *         location as measured in bytes from the beginning of the file.
+   * @throws IOException
+   *           if the call fails
+   * @see <a href="https://linux.die.net/man/2/lseek">lseek(2)</a>
+   */
   public static long lseek(int fd, long offset, int whence)  throws IOException {
     long result = lseek0(fd, offset, whence);
     if (result == (offset - 1)) {
