@@ -15,10 +15,125 @@
 #include "jniUtil.h"
 #include "com_github_marschall_aioj_capi_LibIo.h"
 
-
 _Static_assert (com_github_marschall_aioj_capi_LibIo_PATH_MAX == PATH_MAX, "com_github_marschall_aioj_capi_LibIo_PATH_MAX == PATH_MAX");
 _Static_assert (com_github_marschall_aioj_capi_LibIo_FILENAME_MAX == FILENAME_MAX, "com_github_marschall_aioj_capi_LibIo_FILENAME_MAX == FILENAME_MAX");
 _Static_assert (com_github_marschall_aioj_capi_LibIo_NULL == NULL, "com_github_marschall_aioj_capi_LibIo_NULL == NULL");
+
+jfieldID stDevFieldID;
+jfieldID stInoFieldID;
+jfieldID stModeFieldID;
+jfieldID stNlinkFieldID;
+jfieldID stUidFieldID;
+jfieldID stGidFieldID;
+jfieldID stRdevFieldID;
+jfieldID stSizeFieldID;
+jfieldID stBlksizeFieldID;
+jfieldID stBlocksFieldID;
+jfieldID stAtimSecFieldID;
+jfieldID stAtimNsecFieldID;
+jfieldID stMtimSecFieldID;
+jfieldID stMtimNsecFieldID;
+jfieldID stCtimSecFieldID;
+jfieldID stCtimNsecFieldID;
+
+void initFieldIds(JNIEnv *env, jclass structStatClass)
+{
+  stDevFieldID = (*env)->GetFieldID(env, structStatClass, "st_dev", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_ino", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_mode", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_nlink", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_uid", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_gid", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_rdev", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_size", "J");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_blksize", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_blocks", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_atim_sec", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_atim_nsec", "J");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_mtim_sec", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_mtim_nsec", "J");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_ctim_sec", "I");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+
+  (*env)->GetFieldID(env, structStatClass, "st_ctim_nsec", "J");
+  if ((*env)->ExceptionCheck(env) == JNI_TRUE)
+  {
+    return;
+  }
+}
 
 int throwIoException(JNIEnv *env, int errorCode)
 {
