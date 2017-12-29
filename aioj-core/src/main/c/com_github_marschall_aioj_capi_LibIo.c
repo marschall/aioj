@@ -152,7 +152,7 @@ unsigned char *jbyteArrayToUnsignedCharStar(JNIEnv *env, jbyteArray array, jint 
 
   (*env)->GetByteArrayRegion(env, array, 0, len, (jbyte *) buf);
  
-  // GetByteArrayRegion throws ArrayIndexOutOfBoundsException on invalid indices
+  /* GetByteArrayRegion throws ArrayIndexOutOfBoundsException on invalid indices */
   if ((*env)->ExceptionCheck(env) == JNI_TRUE)
   {
     return NULL;
@@ -174,12 +174,46 @@ jlong sendfile0
 
   if (transferred == -1)
   {
-    // save the error code
+    /* save the error code */
     int errorcode = errno;
     throwIoException(env, errorcode);
-    // we will end up returning -1 from C but an IOException upon entry into Java
+    /* we will end up returning -1 from C but an IOException upon entry into Java */
   }
   return transferred;
+}
+
+jint fstatByte3
+  (JNIEnv *env, jint fd, jobject statbuf)
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+
+  struct stat sb;
+  int returnValue = fstat(fd, &sb);
+  if (returnValue == -1)
+  {
+    /* save the error code */
+    int errorcode = errno;
+    throwIoException(env, errorcode);
+  }
+
+  (*env)->SetIntField(env, statbuf, stDevFieldID, sb.st_dev);
+  (*env)->SetIntField(env, statbuf, stInoFieldID, sb.st_ino);
+  (*env)->SetIntField(env, statbuf, stModeFieldID, sb.st_mode);
+  (*env)->SetIntField(env, statbuf, stNlinkFieldID, sb.st_nlink);
+  (*env)->SetIntField(env, statbuf, stUidFieldID, sb.st_uid);
+  (*env)->SetIntField(env, statbuf, stGidFieldID, sb.st_gid);
+  (*env)->SetIntField(env, statbuf, stRdevFieldID, sb.st_rdev);
+  (*env)->SetLongField(env, statbuf, stSizeFieldID, sb.st_size);
+  (*env)->SetIntField(env, statbuf, stBlksizeFieldID, sb.st_blksize);
+  (*env)->SetIntField(env, statbuf, stBlocksFieldID, sb.st_blocks);
+  (*env)->SetIntField(env, statbuf, stAtimSecFieldID, sb.st_atim.tv_sec);
+  (*env)->SetLongField(env, statbuf, stAtimNsecFieldID, sb.st_atim.tv_nsec);
+  (*env)->SetIntField(env, statbuf, stMtimSecFieldID, sb.st_mtim.tv_sec);
+  (*env)->SetLongField(env, statbuf, stMtimNsecFieldID, sb.st_mtim.tv_nsec);
+  (*env)->SetIntField(env, statbuf, stCtimSecFieldID, sb.st_ctim.tv_sec);
+  (*env)->SetLongField(env, statbuf, stCtimNsecFieldID, sb.st_ctim.tv_nsec);
+
+  return 0;
 }
 
 jint openByte3
@@ -193,7 +227,7 @@ jint openByte3
   // GetByteArrayRegion throws ArrayIndexOutOfBoundsException on invalid indices
   if ((*env)->ExceptionCheck(env) == JNI_TRUE)
   {
-    return NULL;
+    return -1;
   }
   buf[jpathnamelen] = 0; // terminator
   
@@ -202,8 +236,7 @@ jint openByte3
   if (fd == -1)
   {
     // save the error code
-    int errorcode = 0;
-    errorcode = errno;
+    int errorcode = errno;
     throwIoException(env, errorcode);
   }
   
@@ -218,30 +251,31 @@ jint openString3
   _Static_assert (sizeof(jint) == sizeof(mode_t), "sizeof(jint) == sizeof(mode_t)");
 
   char pathname[PATH_MAX];
-  jsize utf8len = (*env)->GetStringUTFRegion(env, jpathname);
+  jsize utf8len = (*env)->GetStringUTFLength(env, jpathname);
   if (utf8len >= PATH_MAX)
   {
     throwIoException(env, ENAMETOOLONG);
-    // we return -1 from C but an IOException upon entry into Java
+    /* we return -1 from C but an IOException upon entry into Java */
     return -1;
   }
-  pathname[utf8len] = 0;
 
   (*env)->GetStringUTFRegion(env, jpathname, 0, jpathnamelen, &pathname);
-  // GetStringUTFRegion throws StringIndexOutOfBoundsException on invalid indices
+  /* GetStringUTFRegion throws StringIndexOutOfBoundsException on invalid indices */
   if ((*env)->ExceptionCheck(env) == JNI_TRUE)
   {
     return -1;
   }
+  /* JNI does not guarantee 0 terminator https://stackoverflow.com/questions/16694239/java-native-code-string-ending */
+  pathname[utf8len] = 0;
 
   int fd = open(pathname, flags, mode);
 
   if (fd == -1)
   {
-    // save the error code
+    /* save the error code */
     int errorcode = errno;
     throwIoException(env, errorcode);
-    // we will end up returning -1 from C but an IOException upon entry into Java
+    /* we will end up returning -1 from C but an IOException upon entry into Java */
   }
   return fd;
 }
@@ -253,22 +287,22 @@ jint openByte2
 
   char pathname[PATH_MAX];
   (*env)->GetByteArrayRegion(env, jpathname, 0, jpathnamelen, (jbyte *) pathname);
-  // GetByteArrayRegion throws ArrayIndexOutOfBoundsException on invalid indices
+  /* GetByteArrayRegion throws ArrayIndexOutOfBoundsException on invalid indices */
   if ((*env)->ExceptionCheck(env) == JNI_TRUE)
   {
     return NULL;
   }
-  buf[jpathnamelen] = 0; // terminator
+  buf[jpathnamelen] = 0; /* terminator */
   
   
   int fd = open(pathname, flags);
 
   if (fd == -1)
   {
-    // save the error code
+    /* save the error code */
     int errorcode = errno;
     throwIoException(env, errorcode);
-    // we will end up returning -1 from C but an IOException upon entry into Java
+    /* we will end up returning -1 from C but an IOException upon entry into Java */
   }
 
   return fd;
@@ -280,30 +314,32 @@ jint openString2
   _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
 
   char pathname[PATH_MAX];
-  jsize utf8len = (*env)->GetStringUTFRegion(env, jpathname);
+  jsize utf8len = (*env)->GetStringUTFLength(env, jpathname);
   if (utf8len >= PATH_MAX)
   {
     throwIoException(env, ENAMETOOLONG);
-    // we return -1 from C but an IOException upon entry into Java
+    /* we return -1 from C but an IOException upon entry into Java */
     return -1;
   }
-  pathname[utf8len] = 0;
 
   (*env)->GetStringUTFRegion(env, jpathname, 0, jpathnamelen, &pathname);
-  // GetStringUTFRegion throws StringIndexOutOfBoundsException on invalid indices
+  /* GetStringUTFRegion throws StringIndexOutOfBoundsException on invalid indices */
   if ((*env)->ExceptionCheck(env) == JNI_TRUE)
   {
     return -1;
   }
 
+  /* JNI does not guarantee 0 terminator https://stackoverflow.com/questions/16694239/java-native-code-string-ending */
+  pathname[utf8len] = 0;
+
 
   int fd = open(pathname, flags);
   if (fd == -1)
   {
-    // save the error code
+    /* save the error code */
     int errorcode = errno;
     throwIoException(env, errorcode);
-    // we will end up returning -1 from C but an IOException upon entry into Java
+    /* we will end up returning -1 from C but an IOException upon entry into Java */
   }
 
   return fd;

@@ -59,6 +59,7 @@ public final class StructStat {
   public int /* blkcnt_t  */ st_blocks;
 
   // https://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html
+  // https://linux.die.net/man/3/clock_gettime
   public int /* struct timespec time_t */ st_atim_sec;  /* Time of last access */
   public long /* struct timespec long */ st_atim_nsec;
   public int /* struct timespec time_t */ st_mtim_sec;  /* Time of last modification */
