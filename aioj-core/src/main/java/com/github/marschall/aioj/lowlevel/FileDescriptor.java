@@ -64,6 +64,10 @@ public final class FileDescriptor implements AutoCloseable {
     return statbuf;
   }
 
+  public long lseek(long offset, int whence)  throws IOException {
+    return LibIo.lseek(this.fd, offset, whence);
+  }
+
   @Override
   public void close() throws IOException {
     LibIo.close(this.fd);

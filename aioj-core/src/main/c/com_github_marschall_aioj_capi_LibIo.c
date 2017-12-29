@@ -5,7 +5,7 @@
 #include <sys/mman.h>     // mincore
 #include <sys/sendfile.h>
 #include <fcntl.h>        // open
-#include <unistd.h>       // close, mincore
+#include <unistd.h>       // close, mincore, lseek
 #include <stdlib.h>       // malloc
 #include <string.h>       // strerror_r
 #include <errno.h>        // errno
@@ -161,6 +161,22 @@ unsigned char *jbyteArrayToUnsignedCharStar(JNIEnv *env, jbyteArray array, jint 
   return buf;
 }
 
+jlong lseek0
+  (JNIEnv *env, jint fd, jlong offset, jint whence)
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+  _Static_assert (sizeof(off_t) == sizeof(jlong), "sizeof(off_t) == sizeof(jlong)");
+
+  off_t offset = lseek(fd, offset, whence);
+  if (offset == (off_t) -1)
+  {
+    /* save the error code */
+    int errorcode = errno;
+    throwIoException(env, errorcode);
+    /* we will end up returning -1 from C but an IOException upon entry into Java */
+  }
+  return offset;
+}
 
 jlong sendfile0
   (JNIEnv *env, jint out_fd, jint in_fd, jlong offset, jlong count)

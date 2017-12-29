@@ -3,7 +3,8 @@ target/
 aio
 allocate_aligned
 assertions
-vlocksize
+blocksize
+lseek-argument
 madvise-argument
 mmap-argument
 open-argument
