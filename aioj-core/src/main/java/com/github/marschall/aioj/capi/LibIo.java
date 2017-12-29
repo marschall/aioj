@@ -101,8 +101,8 @@ public final class LibIo {
       throw new IllegalArgumentException("pathName too long");
     }
     Objects.requireNonNull(statbuf, "statbuf");
-    int result = stat0(pathName, statbuf);
-    if (result != 0) {
+    int returnCode = stat0(pathName, statbuf);
+    if (returnCode != 0) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("could not stat() file");
     }
@@ -123,8 +123,8 @@ public final class LibIo {
   public static void stat(String pathName, StructStat statbuf) throws IOException {
     Objects.requireNonNull(pathName, "pathName");
     Objects.requireNonNull(statbuf, "statbuf");
-    int result = stat0(pathName, statbuf);
-    if (result != 0) {
+    int returnCode = stat0(pathName, statbuf);
+    if (returnCode != 0) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("could not stat() file");
     }
@@ -514,8 +514,8 @@ public final class LibIo {
    * @see <a href="http://man7.org/linux/man-pages/man2/close.2.html">close(2)</a>
    */
   public static void close(int fd)  throws IOException {
-    int result = close0(fd);
-    if (result == -1) {
+    int returnCode = close0(fd);
+    if (returnCode == -1) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("could not close() file");
     }
@@ -581,15 +581,14 @@ public final class LibIo {
    * @see LseekArgument
    */
   public static long lseek(int fd, long offset, int whence)  throws IOException {
-    long result = lseek0(fd, offset, whence);
-    if (result == - 1) {
+    long newOffset = lseek0(fd, offset, whence);
+    if (newOffset == - 1) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("could not lseek() file");
     }
-    return result;
+    return newOffset;
   }
 
-  // https://linux.die.net/man/2/lseek
   private static native long lseek0(int fd, long offset, int whence) throws IOException;
 
   // https://linux.die.net/man/2/fadvise
@@ -600,7 +599,43 @@ public final class LibIo {
 
   private static native int fadvise0(int fd, long offset, long len, int advice);
 
-  public static int mincore(ByteBuffer buffer, long length, byte[] vec) throws IOException {
+  /**
+   * Truncate a file to a specified length.
+   * <p>
+   * The ftruncate() function causes the regular file named by path or
+   * referenced by fd to be truncated to a size of precisely length bytes.
+   * <p>
+   *
+   * If the file previously was larger than this size, the extra data is lost.
+   * If the file previously was shorter, it is extended, and the extended part
+   * reads as null bytes ('\0').
+   * <p>
+   * The file offset is not changed.
+   * <p>
+   * If the size changed, then the st_ctime and st_mtime fields (respectively,
+   * time of last status change and time of last modification; see stat(2)) for
+   * the file are updated, and the set-user-ID and set-group-ID permission bits
+   * may be cleared.
+   * <p>
+   * With ftruncate(), the file must be open for writing.
+   *
+   * @param fd
+   * @param length
+   * @throws IOException
+   *           if the call fails
+   * @see <a href="https://linux.die.net/man/2/ftruncate">ftruncate(2)</a>
+   */
+  public static void ftruncate(int fd, long length) throws IOException {
+    int returnCode = ftruncate0(fd, length);
+    if (returnCode == - 1) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("ftruncate not lseek() file");
+    }
+  }
+
+  private static native int ftruncate0(int fd, long length) throws IOException;
+
+  public static void mincore(ByteBuffer buffer, long length, byte[] vec) throws IOException {
     Objects.requireNonNull(vec, "vec");
     if (length > buffer.capacity()) {
       throw new IllegalArgumentException("length too large");
@@ -608,12 +643,11 @@ public final class LibIo {
     if (length < 0) {
       throw new IllegalArgumentException("length is negative");
     }
-    int result = mincore0(buffer, length, vec, vec.length);
-    if (result == -1) {
+    int returnCode = mincore0(buffer, length, vec, vec.length);
+    if (returnCode == -1) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("could not mincore() address");
     }
-    return result;
   }
 
   // http://insights.oetiker.ch/linux/fadvise/
@@ -738,8 +772,8 @@ public final class LibIo {
    */
   public static void munmap(ByteBuffer buffer) throws IOException {
     BufferAssertions.requireDirect(buffer);
-    int result = munmap0(buffer, buffer.capacity());
-    if (result != 0) {
+    int returnCode = munmap0(buffer, buffer.capacity());
+    if (returnCode != 0) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("could not munmap() address");
     }
