@@ -797,4 +797,6 @@ public final class LibIo {
 
   public static native int getBlockSize(int fd);
 
+  private static native void initFieldIds();
+
 }
