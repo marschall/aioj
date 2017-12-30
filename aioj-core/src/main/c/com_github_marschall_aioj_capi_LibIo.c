@@ -161,6 +161,22 @@ unsigned char *jbyteArrayToUnsignedCharStar(JNIEnv *env, jbyteArray array, jint 
   return buf;
 }
 
+jint fadvise0
+  (JNIEnv *env, jint fd, jlong offset, jlong len, jint advice)
+{
+  _Static_assert (sizeof(jint) == sizeof(int), "sizeof(jint) == sizeof(int)");
+  _Static_assert (sizeof(off_t) == sizeof(jlong), "sizeof(off_t) == sizeof(jlong)");
+
+  int ret = posix_fadvise(int fd, off_t offset, off_t len, int advice);
+  if (ret != 0)
+  {
+    /* save the error code */
+    throwIoException(env, ret);
+    /* we will end up returning ret from C but an IOException upon entry into Java */
+  }
+  return ret;
+}
+
 jint ftruncate0
   (JNIEnv *env, jint fd, jlong length)
 {

@@ -582,7 +582,7 @@ public final class LibIo {
    */
   public static long lseek(int fd, long offset, int whence)  throws IOException {
     long newOffset = lseek0(fd, offset, whence);
-    if (newOffset == - 1) {
+    if (newOffset == -1) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("could not lseek() file");
     }
@@ -591,13 +591,61 @@ public final class LibIo {
 
   private static native long lseek0(int fd, long offset, int whence) throws IOException;
 
-  // https://linux.die.net/man/2/fadvise
-  // http://man7.org/linux/man-pages/man2/posix_fadvise.2.html
-  public static int fadvise(int fd, long offset, long len, int advice) {
-    return fadvise0(fd, offset, len, advice);
+  /**
+   * Predeclare an access pattern for file data.
+   * <p>
+   * Programs can use posix_fadvise() to announce an intention to access file
+   * data in a specific pattern in the future, thus allowing the kernel to
+   * perform appropriate optimizations.
+   * <p>
+   * The advice applies to a (not necessarily existent) region starting at
+   * offset and extending for len bytes (or until the end of the file if len is
+   * 0) within the file referred to by fd. The advice is not binding; it merely
+   * constitutes an expectation on behalf of the application.
+   * <p>
+   * Permissible values for advice include:
+   * <ul>
+   * <li>{@link FadviseArgument#POSIX_FADV_NORMAL}</li>
+   * <li>{@link FadviseArgument#POSIX_FADV_SEQUENTIAL}</li>
+   * <li>{@link FadviseArgument#POSIX_FADV_RANDOM}</li>
+   * <li>{@link FadviseArgument#POSIX_FADV_NOREUSE}</li>
+   * <li>{@link FadviseArgument#POSIX_FADV_WILLNEED}</li>
+   * <li>{@link FadviseArgument#POSIX_FADV_DONTNEED}</li>
+   * </ul>
+   * <p>
+   * Under Linux, {@link FadviseArgument#POSIX_FADV_NORMAL} sets the readahead
+   * window to the default size for the backing device;
+   * {@link FadviseArgument#POSIX_FADV_SEQUENTIAL} doubles this size, and
+   * {@link FadviseArgument#POSIX_FADV_RANDOM} disables file readahead entirely.
+   * These changes affect the entire file, not just the specified region (but
+   * other open file handles to the same file are unaffected).
+   * <p>
+   * The contents of the kernel buffer cache can be cleared via the
+   * {@code /proc/sys/vm/drop_caches} interface described in proc(5).
+   * <p>
+   * One can obtain a snapshot of which pages of a file are resident in the
+   * buffer cache by opening a file, mapping it with
+   * {@link #mmap(ByteBuffer, int, int, int, int, long)}, and then applying
+   * {@link #mincore(ByteBuffer, long, byte[])} to the mapping.
+   *
+   * @param fd
+   * @param offset
+   * @param len
+   * @param advice
+   * @throws IOException
+   *           if the call fails
+   * @see <a href="http://man7.org/linux/man-pages/man2/posix_fadvise.2.html">posix_fadvise(2)</a>
+   * @see FadviseArgument
+   */
+  public static void fadvise(int fd, long offset, long len, int advice) throws IOException {
+    int returnCode = fadvise0(fd, offset, len, advice);
+    if (returnCode != 0) {
+      // this shouldn't happen, JNI should already have thrown an exception
+      throw new IOException("could not fadvise() file");
+    }
   }
 
-  private static native int fadvise0(int fd, long offset, long len, int advice);
+  private static native int fadvise0(int fd, long offset, long len, int advice) throws IOException;
 
   /**
    * Truncate a file to a specified length.
@@ -627,7 +675,7 @@ public final class LibIo {
    */
   public static void ftruncate(int fd, long length) throws IOException {
     int returnCode = ftruncate0(fd, length);
-    if (returnCode == - 1) {
+    if (returnCode == -1) {
       // this shouldn't happen, JNI should already have thrown an exception
       throw new IOException("ftruncate not lseek() file");
     }

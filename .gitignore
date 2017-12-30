@@ -4,6 +4,7 @@ aio
 allocate_aligned
 assertions
 blocksize
+fadvise-argument
 lseek-argument
 madvise-argument
 mmap-argument
